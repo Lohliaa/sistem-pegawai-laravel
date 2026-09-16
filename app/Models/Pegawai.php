@@ -25,10 +25,20 @@ class Pegawai extends Model
         'tanggal_tmt' => 'date',
     ];
 
-    // Relationship
+    // Relationships
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function pejabatPenilai()
+    {
+        return $this->hasOne(PejabatPenilai::class);
+    }
+
+    public function penilaian()
+    {
+        return $this->hasMany(PenilaianKinerja::class);
     }
 }
 

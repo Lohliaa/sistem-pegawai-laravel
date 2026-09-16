@@ -13,6 +13,16 @@ class User extends Authenticatable
     use HasFactory, Notifiable;
 
     /**
+     * Role yang tersedia pada sistem.
+     */
+    public const ROLES = [
+        'admin' => 'Admin',
+        'staf' => 'Staf',
+        'kanit' => 'Kanit',
+        'kabid' => 'Kabid',
+    ];
+
+    /**
      * The attributes that are mass assignable.
      *
      * @var list<string>
