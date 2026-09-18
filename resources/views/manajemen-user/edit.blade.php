@@ -19,9 +19,15 @@
             @csrf
             @method('PUT')
             <div class="mb-3">
+                <label for="nama" class="form-label">Nama Pegawai</label>
+                <input type="text" name="nama" id="nama" class="form-control"
+                    value="{{ old('nama', $user->pegawai?->nama) }}" maxlength="255" placeholder="Masukkan nama pegawai">
+                <small class="text-muted">Nama profil pegawai yang terhubung dengan akun ini.</small>
+            </div>
+            <div class="mb-3">
                 <label for="username" class="form-label">Username <span class="text-danger">*</span></label>
                 <input type="text" name="username" id="username" class="form-control"
-                       value="{{ old('username', $user->username) }}" maxlength="50" required>
+                    value="{{ old('username', $user->username) }}" maxlength="50" required>
             </div>
             <div class="mb-3">
                 <label for="password" class="form-label">Password Baru</label>
@@ -32,7 +38,7 @@
                 <label for="role" class="form-label">Role <span class="text-danger">*</span></label>
                 <select name="role" id="role" class="form-select" required>
                     @foreach($roles as $nilai => $label)
-                        <option value="{{ $nilai }}" @selected(old('role', $user->role) === $nilai)>{{ $label }}</option>
+                    <option value="{{ $nilai }}" @selected(old('role', $user->role) === $nilai)>{{ $label }}</option>
                     @endforeach
                 </select>
             </div>

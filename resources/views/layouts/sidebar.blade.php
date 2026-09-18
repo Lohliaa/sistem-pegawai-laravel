@@ -1,9 +1,17 @@
-<div class="sidebar">
-    <div class="brand">
-        <h4><i class="bi bi-building"></i> SIPS</h4>
-        <small>Sistem Informasi Pegawai</small>
+<div class="sidebar" id="sidebar">
+    <div>
+        <div class="brand">
+            <div>
+                <h4 class="mb-0"><i class="bi bi-building"></i>SIGATRA</h4>
+                <small></small>
+            </div>
+            <button class="btn btn-sm btn-outline-light d-md-none" id="closeSidebarBtn">
+                <i class="bi bi-x-lg"></i>
+            </button>
+        </div>
     </div>
 
+    <div class="flex-grow-1 overflow-auto" style="min-height: 0;">
     <a href="{{ route('dashboard') }}" class="{{ request()->routeIs('dashboard') ? 'active' : '' }}">
         <i class="bi bi-house"></i> Dashboard
     </a>
@@ -123,11 +131,14 @@
     @endif
 
     <hr style="border-color: #7f8c8d; opacity: 0.4; margin-top: 30px;">
+    </div>
 
-    <form action="{{ route('logout') }}" method="POST">
-        @csrf
-        <button type="submit" class="btn btn-link text-white text-decoration-none w-100 text-start" style="padding: 10px 15px; color: #e74c3c !important;">
-            <i class="bi bi-box-arrow-right"></i> Logout
-        </button>
-    </form>
+    <div>
+        <form action="{{ route('logout') }}" method="POST">
+            @csrf
+            <button type="submit" class="btn btn-link text-white text-decoration-none w-100 text-start" style="padding: 10px 15px; color: #e74c3c !important;">
+                <i class="bi bi-box-arrow-right"></i> Logout
+            </button>
+        </form>
+    </div>
 </div>

@@ -22,7 +22,7 @@
             <div class="col-md-6">
                 <label class="form-label">Cari</label>
                 <input type="text" name="search" class="form-control" value="{{ request('search') }}"
-                       placeholder="Nama / Unit / Jabatan / Tempat">
+                       placeholder="Nama / Unit / Jabatan">
             </div>
             <div class="col-auto">
                 <button type="submit" class="btn btn-primary"><i class="bi bi-search"></i> Terapkan</button>
@@ -42,8 +42,7 @@
                     <th>Username</th>
                     <th>Unit</th>
                     <th>Jabatan</th>
-                    <th width="100">Gender</th>
-                    <th width="200">Aksi</th>
+                    <th width="150">Aksi</th>
                 </tr>
             </thead>
             <tbody>
@@ -54,7 +53,6 @@
                     <td>{{ $pegawai->user?->username ?? '-' }}</td>
                     <td>{{ $pegawai->unit ?: '-' }}</td>
                     <td>{{ $pegawai->jabatan ?: '-' }}</td>
-                    <td>{{ $pegawai->gender === 'L' ? 'L' : ($pegawai->gender === 'P' ? 'P' : '-') }}</td>
                     <td>
                         <a href="{{ route('profile-pegawai.show', $pegawai->id) }}" class="btn btn-sm btn-info">
                             <i class="bi bi-eye"></i>
@@ -74,7 +72,7 @@
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="7" class="text-center">Belum ada data pegawai</td>
+                    <td colspan="6" class="text-center">Belum ada data pegawai</td>
                 </tr>
                 @endforelse
             </tbody>

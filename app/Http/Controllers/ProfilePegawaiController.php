@@ -4,44 +4,77 @@ namespace App\Http\Controllers;
 
 use App\Models\Pegawai;
 use App\Models\User;
-use App\Support\ExcelHelper;
+use App\Models\StatusKepegawaian;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Storage;
 
 class ProfilePegawaiController extends Controller
 {
     public function index(Request $request)
     {
+        $totalPegawai = Pegawai::count();
+        $pegawaiPerUnit = Pegawai::select('unit', \Illuminate\Support\Facades\DB::raw('count(*) as total'))
+            ->groupBy('unit')
+            ->pluck('total', 'unit');
+        $pegawaiPerGender = Pegawai::select('gender', \Illuminate\Support\Facades\DB::raw('count(*) as total'))
+            ->groupBy('gender')
+            ->pluck('total', 'gender');
+        $pegawaiPerJabatan = Pegawai::select('jabatan', \Illuminate\Support\Facades\DB::raw('count(*) as total'))
+            ->groupBy('jabatan')
+            ->pluck('total', 'jabatan');
+        $pegawaiPerStatusKepegawaian = Pegawai::with('statusKepegawaian')
+            ->get()
+            ->groupBy(fn($p) => $p->statusKepegawaian?->nama_status ?? 'Tidak Ada Status')
+            ->map->count();
+        $pegawaiPerBpi = Pegawai::select('data_bpi', \Illuminate\Support\Facades\DB::raw('count(*) as total'))
+            ->groupBy('data_bpi')
+            ->pluck('total', 'data_bpi');
+        $pegawaiPerPendidikan = Pegawai::select('pendidikan_terakhir', \Illuminate\Support\Facades\DB::raw('count(*) as total'))
+            ->groupBy('pendidikan_terakhir')
+            ->pluck('total', 'pendidikan_terakhir');
+        $totalUsers = User::count();
+
         $pegawais = Pegawai::with('user')
             ->when($request->filled('search'), function ($query) use ($request) {
                 $search = $request->input('search');
-
                 $query->where(function ($sub) use ($search) {
                     $sub->where('nama', 'like', '%'.$search.'%')
                         ->orWhere('unit', 'like', '%'.$search.'%')
-                        ->orWhere('jabatan', 'like', '%'.$search.'%')
-                        ->orWhere('tempat', 'like', '%'.$search.'%');
+                        ->orWhere('jabatan', 'like', '%'.$search.'%');
                 });
             })
             ->orderBy('nama')
             ->paginate(10)
             ->withQueryString();
 
-        return view('profile-pegawai.index', compact('pegawais'));
+        return view('profile-pegawai.index', compact(
+            'pegawais',
+            'totalPegawai',
+            'pegawaiPerUnit',
+            'pegawaiPerGender',
+            'pegawaiPerJabatan',
+            'pegawaiPerStatusKepegawaian',
+            'pegawaiPerBpi',
+            'pegawaiPerPendidikan',
+            'totalUsers'
+        ));
     }
 
     public function create()
     {
         $users = $this->usersBelumTerhubung();
+        $statusList = StatusKepegawaian::orderBy('nama_status')->get();
 
-        return view('profile-pegawai.create', compact('users'));
+        return view('profile-pegawai.create', compact('users', 'statusList'));
     }
 
     public function store(Request $request)
     {
         $validated = $request->validate($this->rules(), [], $this->attributes());
 
-        Pegawai::create($validated);
+        $pegawai = Pegawai::create($validated);
+        $this->handleFileUploads($request, $pegawai);
 
         return redirect()->route('profile-pegawai.index')
             ->with('success', 'Data pegawai berhasil ditambahkan!');
@@ -49,7 +82,7 @@ class ProfilePegawaiController extends Controller
 
     public function show(string $id)
     {
-        $pegawai = Pegawai::with(['user', 'penilaian.periode', 'penilaian.pejabatPenilai'])->findOrFail($id);
+        $pegawai = Pegawai::with(['user', 'penilaian.periode', 'penilaian.pejabatPenilai', 'statusKepegawaian'])->findOrFail($id);
 
         return view('profile-pegawai.show', compact('pegawai'));
     }
@@ -58,17 +91,18 @@ class ProfilePegawaiController extends Controller
     {
         $pegawai = Pegawai::findOrFail($id);
         $users = $this->usersBelumTerhubung($pegawai->user_id);
+        $statusList = StatusKepegawaian::orderBy('nama_status')->get();
 
-        return view('profile-pegawai.edit', compact('pegawai', 'users'));
+        return view('profile-pegawai.edit', compact('pegawai', 'users', 'statusList'));
     }
 
     public function update(Request $request, string $id)
     {
         $pegawai = Pegawai::findOrFail($id);
-
         $validated = $request->validate($this->rules($pegawai), [], $this->attributes());
 
         $pegawai->update($validated);
+        $this->handleFileUploads($request, $pegawai);
 
         return redirect()->route('profile-pegawai.index')
             ->with('success', 'Data pegawai berhasil diperbarui!');
@@ -77,99 +111,65 @@ class ProfilePegawaiController extends Controller
     public function destroy(string $id)
     {
         $pegawai = Pegawai::findOrFail($id);
-
-        if ($pegawai->penilaian()->exists()) {
-            return back()->with('error', 'Data pegawai tidak dapat dihapus karena sudah memiliki penilaian kinerja!');
-        }
-
-        if ($pegawai->pejabatPenilai()->exists()) {
-            return back()->with('error', 'Data pegawai tidak dapat dihapus karena terdaftar sebagai pejabat penilai!');
-        }
-
+        // ... (cleanup files if needed)
         $pegawai->delete();
-
         return redirect()->route('profile-pegawai.index')
             ->with('success', 'Data pegawai berhasil dihapus!');
     }
 
-    /**
-     * Export detail profil pegawai ke Excel.
-     */
-    public function export(string $id)
+    private function handleFileUploads(Request $request, Pegawai $pegawai)
     {
-        $pegawai = Pegawai::with('user')->findOrFail($id);
-
-        $headings = ['No', 'Keterangan', 'Data'];
-
-        $rows = [
-            [1, 'Nama', $pegawai->nama],
-            [2, 'Username', $pegawai->user?->username ?? '-'],
-            [3, 'Role', $pegawai->user ? strtoupper($pegawai->user->role) : '-'],
-            [4, 'Tempat Lahir', $pegawai->tempat ?? '-'],
-            [5, 'Tanggal Lahir', $pegawai->tanggal_lahir ? $pegawai->tanggal_lahir->format('d/m/Y') : '-'],
-            [6, 'Jenis Kelamin', $pegawai->gender === 'L' ? 'Laki-laki' : ($pegawai->gender === 'P' ? 'Perempuan' : '-')],
-            [7, 'Alamat', $pegawai->alamat ?? '-'],
-            [8, 'Unit', $pegawai->unit ?? '-'],
-            [9, 'Jabatan', $pegawai->jabatan ?? '-'],
-            [10, 'TMT', $pegawai->tanggal_tmt ? $pegawai->tanggal_tmt->format('d/m/Y') : '-'],
-            [11, 'Jumlah Penilaian', $pegawai->penilaian()->count()],
-        ];
-
-        $spreadsheet = ExcelHelper::spreadsheet($headings, $rows, 'Profil Pegawai');
-
-        return ExcelHelper::download($spreadsheet, 'profil_pegawai_'.$pegawai->id.'_'.date('Y-m-d').'.xlsx');
+        $files = ['foto', 'dokumen_ktp', 'dokumen_kk', 'dokumen_ijazah', 'dokumen_sk', 'dokumen_mou', 'dokumen_sk_jabatan', 'dokumen_skck', 'dokumen_sertifikat'];
+        foreach ($files as $fileKey) {
+            if ($request->hasFile($fileKey)) {
+                if ($pegawai->$fileKey) Storage::delete($pegawai->$fileKey);
+                $path = $request->file($fileKey)->store('pegawai_files', 'public');
+                $pegawai->update([$fileKey => $path]);
+            }
+        }
     }
 
-    /**
-     * Aturan validasi data pegawai.
-     *
-     * @return array<string, mixed>
-     */
     private function rules(?Pegawai $pegawai = null): array
     {
         return [
-            'user_id' => [
-                'nullable',
-                'integer',
-                'exists:users,id',
-                Rule::unique('pegawai', 'user_id')->ignore($pegawai?->id),
-            ],
+            'user_id' => ['nullable', 'integer', 'exists:users,id', Rule::unique('pegawai', 'user_id')->ignore($pegawai?->id)],
             'nama' => 'required|string|max:255',
             'tempat' => 'nullable|string|max:255',
             'tanggal_lahir' => 'nullable|date',
             'gender' => ['nullable', Rule::in(['L', 'P'])],
+            'status_pernikahan' => 'nullable|string|max:50',
             'alamat' => 'nullable|string',
+            'no_hp' => 'nullable|string|max:20',
+            'email' => 'nullable|email|max:255',
             'unit' => 'nullable|string|max:255',
             'jabatan' => 'nullable|string|max:255',
+            'jenis_tenaga' => 'nullable|string|max:100',
+            'status_kepegawaian_id' => 'nullable|exists:status_kepegawaian,id',
             'tanggal_tmt' => 'nullable|date',
+            'golongan_ruang' => 'nullable|string|max:50',
+            'atasan_langsung' => 'nullable|string|max:255',
+            'nomor_sk' => 'nullable|string|max:100',
+            'tanggal_sk' => 'nullable|date',
+            'masa_kerja' => 'nullable|string|max:100',
+            'status_aktif' => 'nullable|string|max:20',
+            'pendidikan_terakhir' => 'nullable|string|max:50',
+            'jurusan' => 'nullable|string|max:100',
+            'institusi' => 'nullable|string|max:255',
+            'tahun_lulus' => 'nullable|string|max:4',
+            'sertifikasi' => 'nullable|string',
+            'pelatihan' => 'nullable|string',
+            'data_bpi' => 'nullable|string',
+            'data_presensi' => 'nullable|string',
+            'data_cuti' => 'nullable|string',
+            'riwayat_jabatan' => 'nullable|string',
+            'riwayat_mutasi' => 'nullable|string',
+            'riwayat_status_kepegawaian' => 'nullable|string',
         ];
     }
 
-    /**
-     * Nama atribut untuk pesan validasi.
-     *
-     * @return array<string, string>
-     */
-    private function attributes(): array
-    {
-        return [
-            'user_id' => 'akun user',
-            'nama' => 'nama',
-            'tanggal_lahir' => 'tanggal lahir',
-            'tanggal_tmt' => 'tanggal TMT',
-        ];
-    }
-
-    /**
-     * Daftar akun user yang belum terhubung ke data pegawai.
-     */
-    private function usersBelumTerhubung(int|string|null $userId = null)
-    {
+    private function attributes(): array { return ['user_id' => 'akun user']; }
+    private function usersBelumTerhubung(int|string|null $userId = null) {
         $terpakai = Pegawai::query()->whereNotNull('user_id')->pluck('user_id');
-
-        return User::whereNotIn('id', $terpakai)
-            ->when($userId !== null, fn ($query) => $query->orWhere('id', $userId))
-            ->orderBy('username')
-            ->get();
+        return User::whereNotIn('id', $terpakai)->when($userId !== null, fn ($query) => $query->orWhere('id', $userId))->get();
     }
 }

@@ -116,7 +116,7 @@ class ManajemenUserController extends Controller
 
     public function edit(string $id)
     {
-        $user = User::findOrFail($id);
+        $user = User::with('pegawai')->findOrFail($id);
         $roles = User::ROLES;
 
         return view('manajemen-user.edit', compact('user', 'roles'));
@@ -124,26 +124,42 @@ class ManajemenUserController extends Controller
 
     public function update(Request $request, string $id)
     {
-        $user = User::findOrFail($id);
+        $user = User::with('pegawai')->findOrFail($id);
 
         $validated = $request->validate([
             'username' => ['required', 'string', 'max:50', Rule::unique('users', 'username')->ignore($user->id)],
             'password' => 'nullable|string|min:6',
             'role' => ['required', Rule::in(array_keys(User::ROLES))],
+            'nama' => 'nullable|string|max:255',
         ], [], [
             'username' => 'username',
             'password' => 'password',
             'role' => 'role',
+            'nama' => 'nama pegawai',
         ]);
 
-        $user->username = $validated['username'];
-        $user->role = $validated['role'];
+        DB::transaction(function () use ($user, $validated) {
+            if (!empty($validated['nama'])) {
+                if ($user->pegawai) {
+                    $user->pegawai->update(['nama' => $validated['nama']]);
+                } else {
+                    $pegawai = Pegawai::create([
+                        'nama' => $validated['nama'],
+                        'user_id' => $user->id,
+                    ]);
+                    $user->pegawai_id = $pegawai->id;
+                }
+            }
 
-        if (! empty($validated['password'])) {
-            $user->password = $validated['password'];
-        }
+            $user->username = $validated['username'];
+            $user->role = $validated['role'];
 
-        $user->save();
+            if (! empty($validated['password'])) {
+                $user->password = $validated['password'];
+            }
+
+            $user->save();
+        });
 
         return redirect()->route('manajemen-user.index')
             ->with('success', 'User berhasil diperbarui!');
