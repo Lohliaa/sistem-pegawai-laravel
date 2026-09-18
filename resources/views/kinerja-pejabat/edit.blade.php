@@ -51,13 +51,15 @@
                 @enderror
             </div>
             <div class="mb-3">
-                <label for="status_aktif" class="form-label">Status <span class="text-danger">*</span></label>
-                <select name="status_aktif" id="status_aktif" class="form-select @error('status_aktif') is-invalid @enderror" required>
+                <label for="status" class="form-label">Status Kepegawaian <span class="text-danger">*</span></label>
+                <select name="status" id="status" class="form-select @error('status') is-invalid @enderror" required>
+                    <option value="">-- Pilih Status --</option>
                     @foreach($statuses as $nilai => $label)
-                        <option value="{{ $nilai }}" @selected(old('status_aktif', $pejabat->status_aktif) === $nilai)>{{ $label }}</option>
+                        <option value="{{ $nilai }}" @selected(old('status', $pejabat->status) === (string)$nilai)>{{ $label }}</option>
                     @endforeach
                 </select>
-                @error('status_aktif')
+                <small class="text-muted">Data status diambil dari master Status Kepegawaian (kinerja-status).</small>
+                @error('status')
                     <div class="invalid-feedback">{{ $message }}</div>
                 @enderror
             </div>

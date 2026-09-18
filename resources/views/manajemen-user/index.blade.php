@@ -12,6 +12,9 @@
         <a href="{{ route('manajemen-user.export') }}" class="btn btn-success">
             <i class="bi bi-download"></i> Export Excel
         </a>
+        <label class="btn btn-outline-primary mb-0" data-bs-toggle="modal" data-bs-target="#userImportModal">
+            <i class="bi bi-upload"></i> Upload Excel User
+        </label>
         <a href="{{ route('manajemen-user.create') }}" class="btn btn-primary">
             <i class="bi bi-plus-circle"></i> Tambah User
         </a>
@@ -93,6 +96,59 @@
         </table>
 
         {{ $users->links() }}
+    </div>
+</div>
+
+<!-- Modal Upload Excel User -->
+<div class="modal fade" id="userImportModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <form action="{{ route('manajemen-user.import') }}" method="POST" enctype="multipart/form-data" class="modal-content">
+            @csrf
+            <div class="modal-header">
+                <h5 class="modal-title"><i class="bi bi-upload"></i> Upload Excel User</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <input type="file" name="file_excel" class="form-control" accept=".xls,.xlsx,.csv,.txt" required>
+                <small class="text-muted d-block mt-2">Format: .xls, .xlsx, .csv, .txt (maks 10 MB)</small>
+
+                <hr>
+
+                <h6 class="mb-2">Judul kolom (baris pertama = judul, akan dilewati):</h6>
+                <ol class="small text-muted mb-2 ps-3">
+                    <li>Username (wajib, unik)</li>
+                    <li>Password (opsional, default: 123456)</li>
+                    <li>Role (admin / staf / kanit / kabid, default: staf)</li>
+                    <li>Nama Pegawai</li>
+                    <li>Tempat Lahir</li>
+                    <li>Tanggal Lahir</li>
+                    <li>Jenis Kelamin (L / P)</li>
+                    <li>Alamat</li>
+                    <li>Unit</li>
+                    <li>Jabatan</li>
+                    <li>Tanggal TMT</li>
+                </ol>
+                <small class="text-info d-block mb-2">
+                    <i class="bi bi-info-circle"></i>
+                    Kolom jika berdasarkan judul (header) &mdash; urutan kolom bebas.
+                    Kolom "Unit" dat selalu na kolom Unit di sistem,
+                    kolom "Alamat" dat na kolom Alamat.
+                </small>
+                <small class="text-muted">
+                    Setiap baris akan membuat akun user sekaligus menghubungkannya dengan
+                    profil pegawai (<i>profile-pegawai</i>). Username yang sudah terdaftar dilewati.
+                </small>
+                <div class="mt-3">
+                    <a href="{{ route('manajemen-user.template') }}" class="btn btn-sm btn-outline-secondary">
+                        <i class="bi bi-file-earmark-arrow-down"></i> Download Template
+                    </a>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                <button type="submit" class="btn btn-primary">Import</button>
+            </div>
+        </form>
     </div>
 </div>
 @endsection

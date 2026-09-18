@@ -124,10 +124,13 @@ class DataSkController extends Controller
      */
     public function import(Request $request)
     {
+        set_time_limit(300);
+
         $request->validate([
-            'file_excel' => 'required|file|mimes:xls,xlsx,csv,txt|max:5120',
+            'file_excel' => 'required|file|mimes:xls,xlsx,csv,txt|max:10240',
         ], [
             'file_excel.mimes' => 'Format file harus .xls, .xlsx, atau .csv',
+            'file_excel.max' => 'Ukuran file Excel maksimal 10 MB',
         ], [
             'file_excel' => 'file Excel',
         ]);
@@ -206,6 +209,16 @@ class DataSkController extends Controller
         $spreadsheet = ExcelHelper::spreadsheet($headings, $rows, 'Data SK');
 
         return ExcelHelper::download($spreadsheet, 'data_sk_'.date('Y-m-d_His').'.xlsx');
+    }
+
+    /**
+     * Unduh template Excel kosong sesuai format import Data SK.
+     */
+    public function template()
+    {
+        $spreadsheet = ExcelHelper::spreadsheet(array_values(self::KOLOM_EXCEL), [], 'Template Data SK');
+
+        return ExcelHelper::download($spreadsheet, 'template_data_sk.xlsx');
     }
 
     /**

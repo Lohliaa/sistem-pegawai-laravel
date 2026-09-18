@@ -23,6 +23,23 @@ use Throwable;
 class ExcelHelper
 {
     /**
+     * Judul (header) alternatif untuk kolom saat mapeo kolom dari file import.
+     * Kunci adalah judul normalisado (lowercase, trim, spasi tunggal).
+     */
+    private const JUDUL_ALIAS = [
+        'username user' => 'username',
+        'nama pegawai' => 'nama',
+        'tgl lahir' => 'tanggal_lahir',
+        'jenis kelamin' => 'gender',
+        'gender' => 'gender',
+        'unit kerja' => 'unit',
+        'unit pekerja' => 'unit',
+        'adres' => 'alamat',
+        'address' => 'alamat',
+        'tgl tmt' => 'tanggal_tmt',
+    ];
+
+    /**
      * Buat spreadsheet dari baris judul dan baris data.
      *
      * @param  array<int, string>  $headings
@@ -86,6 +103,68 @@ class ExcelHelper
         $spreadsheet->disconnectWorksheets();
 
         return $rows;
+    }
+
+    /**
+     * Tentukan index kolom setiap field berdasarkan judul (header) baris pertama file.
+     *
+     * Kolom yang judulnya jika sesuai kriteria (case-insensitiv, spasi tunggal,
+     * dengan alias) dipakai. Bila judul tidak cukup banyak yang jika (kolom
+     * "username" belum cari atau < 3 kolom jika), kao kembali ke urutan posisi
+     * kolom (kompatibel lama) dan kolom wajib berada di posisi asal.
+     *
+     * @param  array<int, mixed>  $judulBaris
+     * @param  array<string, string>  $kriteria  (field => judul kanonik)
+     * @return array<string, int>  (field => index kolom, dimulai dari 0)
+     */
+    public static function mapKolomDariJudul(array $judulBaris, array $kriteria): array
+    {
+        $judulField = [];
+
+        foreach ($kriteria as $field => $judul) {
+            $judulField[self::normalisiJudul($judul)] = $field;
+        }
+
+        foreach (self::JUDUL_ALIAS as $judul => $field) {
+            if (!array_key_exists($judul, $judulField)) {
+                $judulField[$judul] = $field;
+            }
+        }
+
+        $map = [];
+
+        foreach ($judulBaris as $index => $cel) {
+            $naam = self::normalisiJudul($cel);
+
+            if ($naam === '' || !array_key_exists($naam, $judulField)) {
+                continue;
+            }
+
+            $field = $judulField[$naam];
+
+            if (!array_key_exists($field, $map)) {
+                $map[$field] = (int) $index;
+            }
+        }
+
+        // Kompatibel lama: header tidak bisa dikenali dengan baik.
+        if (!array_key_exists('username', $map) || count($map) < 3) {
+            $map = [];
+
+            foreach (array_keys($kriteria) as $index => $field) {
+                $map[$field] = $index;
+            }
+        }
+
+        return $map;
+    }
+
+    /**
+     * Normalisi judul kolom file untuk komparasi: lowercase, trim, spasi tunggal.
+     */
+    private static function normalisiJudul(mixed $nilai): string
+    {
+        return preg_replace('/\s+/', ' ', strtolower(trim((string) ($nilai ?? ''))));
     }
 
     /**
@@ -203,8 +282,25 @@ class ExcelHelper
         }
 
         $reader = new Csv();
-        $reader->setInputEncoding('UTF-8');
+        $reader->setInputEncoding(self::detectInputEncoding($file));
 
+        // Delimiter dibiarkan null agar PhpSpreadsheet mengira
+        // (koma, titik-koma, tab, pipe, atau baris "sep=") dan melewati BOM.
         return $reader;
+    }
+
+    /**
+     * Deteksi encoding teks file CSV: UTF-8 bila valid, selain itu CP1252 (khas Windows/Excel).
+     */
+    private static function detectInputEncoding(UploadedFile $file): string
+    {
+        $handle = fopen($file->getRealPath(), 'rb');
+        $sampel = $handle ? (string) fread($handle, 8192) : '';
+
+        if ($handle) {
+            fclose($handle);
+        }
+
+        return mb_check_encoding($sampel, 'UTF-8') ? 'UTF-8' : 'CP1252';
     }
 }

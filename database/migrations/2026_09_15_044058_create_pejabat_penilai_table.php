@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('nama', 100);
             $table->string('jabatan', 50);
             $table->string('keterangan')->nullable();
-            $table->enum('status_aktif', ['aktif', 'nonaktif'])->default('aktif');
+            $table->string('status', 50)->nullable();
             $table->string('unit', 20)->nullable();
             $table->timestamps();
         });

@@ -13,7 +13,23 @@ class FormPenilaianController extends Controller
 {
     public function index(Request $request)
     {
-        $filters = $request->only(['pegawai_id', 'periode_id', 'pejabat_penilai_id', 'status']);
+        $filters = $request->only(['pegawai_id', 'periode_id', 'pejabat_penilai_id', 'status', 'kategori']);
+        $kategori = $request->get('kategori', 'pegawai');
+
+        $kategoriLabels = [
+            'pegawai' => 'Pegawai',
+            'guru-alquran' => "Guru Al Qur'an",
+            'guru-non-alquran' => "Guru Non Al Qur'an",
+            'wali-kelas-reguler' => 'Wali Kelas Reguler',
+            'wali-kelas-icp' => 'Wali Kelas ICP',
+            'koordinator-jenjang' => 'Koordinator Jenjang',
+            'koordinator-alquran' => "Koordinator Al Qur'an",
+            'leader' => 'Leader',
+            'musyrifah' => 'Musyrif/ah',
+            'cs' => 'CS',
+        ];
+
+        $kategoriNama = $kategoriLabels[$kategori] ?? 'Pegawai';
 
         $penilaians = PenilaianKinerja::with(['pegawai', 'periode', 'pejabatPenilai'])
             ->filter($filters)
@@ -24,45 +40,49 @@ class FormPenilaianController extends Controller
         return view('form-penilaian.index', [
             'penilaians' => $penilaians,
             'filters' => $filters,
+            'kategori' => $kategori,
+            'kategoriNama' => $kategoriNama,
             'pegawais' => Pegawai::orderBy('nama')->get(),
             'periodes' => PeriodePenilaian::ordered()->get(),
             'pejabats' => PejabatPenilai::orderBy('nama')->get(),
-            'statuses' => PenilaianKinerja::STATUSES,
         ]);
     }
 
-    public function create()
+    public function create(Request $request)
     {
-        return view('form-penilaian.create', $this->dataForm());
+        $kategori = $request->get('kategori', 'pegawai');
+        return view('form-penilaian.create', array_merge($this->dataForm(null, $kategori), ['kategori' => $kategori]));
     }
 
     public function store(Request $request)
     {
-        $validated = $request->validate($this->rules(), $this->messages(), $this->attributes());
+        $kategori = $request->input('kategori', 'pegawai');
+        $validated = $request->validate($this->rules(null, $kategori), $this->messages($kategori), $this->attributes());
 
-        $nilai = $this->nilaiAspek($validated);
+        $detail = $this->detailNilai($validated, $kategori);
 
-        if (PenilaianKinerja::hitungNilaiTotal($nilai) === null) {
-            return back()->withInput()->withErrors([array_key_first(PenilaianKinerja::ASPEK) => 'Minimal satu aspek penilaian harus diberi nilai.']);
+        if ($detail['rata'] === null) {
+            return back()->withInput()->withErrors(['nilai' => 'Minimal satu baris penilaian harus diberi nilai.']);
         }
 
         PenilaianKinerja::create([
             'pegawai_id' => $validated['pegawai_id'],
             'periode_id' => $validated['periode_id'],
             'pejabat_penilai_id' => $validated['pejabat_penilai_id'],
-            ...$nilai,
-            'nilai_total' => PenilaianKinerja::hitungNilaiTotal($nilai),
+            'status_kepegawaian_id' => $validated['status_kepegawaian_id'],
+            'detail_penilaian' => $detail['detail'],
+            'nilai_total' => $detail['rata'],
             'catatan' => $validated['catatan'] ?? null,
-            'status' => $validated['status'],
+            'kategori' => $kategori,
         ]);
 
-        return redirect()->route('form-penilaian.index')
+        return redirect()->route('form-penilaian.index', ['kategori' => $kategori])
             ->with('success', 'Penilaian kinerja berhasil disimpan!');
     }
 
     public function show(string $id)
     {
-        $penilaian = PenilaianKinerja::with(['pegawai', 'periode', 'pejabatPenilai'])->findOrFail($id);
+        $penilaian = PenilaianKinerja::with(['pegawai', 'periode', 'pejabatPenilai', 'statusKepegawaian'])->findOrFail($id);
 
         return view('form-penilaian.show', [
             'penilaian' => $penilaian,
@@ -70,36 +90,38 @@ class FormPenilaianController extends Controller
         ]);
     }
 
-    public function edit(string $id)
+    public function edit(Request $request, string $id)
     {
         $penilaian = PenilaianKinerja::findOrFail($id);
+        $kategori = $request->get('kategori', 'pegawai');
 
-        return view('form-penilaian.edit', $this->dataForm($penilaian));
+        return view('form-penilaian.edit', array_merge($this->dataForm($penilaian, $kategori), ['kategori' => $kategori]));
     }
 
     public function update(Request $request, string $id)
     {
         $penilaian = PenilaianKinerja::findOrFail($id);
+        $kategori = $request->input('kategori', 'pegawai');
 
-        $validated = $request->validate($this->rules($penilaian), $this->messages(), $this->attributes());
+        $validated = $request->validate($this->rules($penilaian, $kategori), $this->messages($kategori), $this->attributes());
 
-        $nilai = $this->nilaiAspek($validated);
+        $detail = $this->detailNilai($validated, $kategori);
 
-        if (PenilaianKinerja::hitungNilaiTotal($nilai) === null) {
-            return back()->withInput()->withErrors([array_key_first(PenilaianKinerja::ASPEK) => 'Minimal satu aspek penilaian harus diberi nilai.']);
+        if ($detail['rata'] === null) {
+            return back()->withInput()->withErrors(['nilai' => 'Minimal satu baris penilaian harus diberi nilai.']);
         }
 
         $penilaian->update([
             'pegawai_id' => $validated['pegawai_id'],
             'periode_id' => $validated['periode_id'],
             'pejabat_penilai_id' => $validated['pejabat_penilai_id'],
-            ...$nilai,
-            'nilai_total' => PenilaianKinerja::hitungNilaiTotal($nilai),
+            'status_kepegawaian_id' => $validated['status_kepegawaian_id'],
+            'detail_penilaian' => $detail['detail'],
+            'nilai_total' => $detail['rata'],
             'catatan' => $validated['catatan'] ?? null,
-            'status' => $validated['status'],
         ]);
 
-        return redirect()->route('form-penilaian.index')
+        return redirect()->route('form-penilaian.index', ['kategori' => $kategori])
             ->with('success', 'Penilaian kinerja berhasil diperbarui!');
     }
 
@@ -117,35 +139,110 @@ class FormPenilaianController extends Controller
      *
      * @return array<string, mixed>
      */
-    private function dataForm(?PenilaianKinerja $penilaian = null): array
+    private function dataForm(?PenilaianKinerja $penilaian = null, string $kategori = 'pegawai'): array
     {
         return [
             'penilaian' => $penilaian,
             'pegawais' => Pegawai::orderBy('nama')->get(),
             'periodes' => PeriodePenilaian::ordered()->get(),
-            'pejabats' => PejabatPenilai::where('status_aktif', 'aktif')->orderBy('nama')->get(),
-            'statuses' => PenilaianKinerja::STATUSES,
+            'pejabats' => PejabatPenilai::orderBy('nama')->get(),
+            'statusKepegawaians' => \App\Models\StatusKepegawaian::all(),
             'aspek' => PenilaianKinerja::ASPEK,
+            'items' => PenilaianKinerja::getItems($kategori),
         ];
     }
 
     /**
-     * Ambil pasangan kolom nilai aspek => nilai dari input.
+     * Bentuk rincian nilai per item dari input validasi.
+     *
+     * Item dengan sub-poin menghitung nilai induknya sebagai rata-rata dari
+     * poin-poin yang terisi, dan menyimpan nilai tiap poin di indeks "sub".
      *
      * @param  array<string, mixed>  $validated
-     * @return array<string, int|null>
+     * @return array{detail: array<string, array<string, mixed>>, jumlah: float, rata: float|null}
      */
-    private function nilaiAspek(array $validated): array
+    private function detailNilai(array $validated, string $kategori = 'pegawai'): array
     {
-        $nilai = [];
+        $nilaiInput = $validated['nilai'] ?? [];
+        $catatanInput = $validated['catatan_baris'] ?? [];
+        $catatanPoin = $validated['catatan_poin'] ?? [];
 
-        foreach (array_keys(PenilaianKinerja::ASPEK) as $kolom) {
-            $nilai[$kolom] = isset($validated[$kolom]) && $validated[$kolom] !== ''
-                ? (int) $validated[$kolom]
-                : null;
+        $detail = [];
+        $terisi = [];
+
+        foreach (PenilaianKinerja::getItems($kategori) as $row) {
+            if (($row['type'] ?? '') !== 'item') {
+                continue;
+            }
+
+            $key = $row['key'];
+
+            $catatan = $catatanInput[$key] ?? null;
+            $catatan = is_array($catatan) ? null : $catatan; // defensif
+            $catatan = $catatan !== null && $catatan !== '' ? $catatan : null;
+
+            if (empty($row['sub'])) {
+                $nilai = isset($nilaiInput[$key]) && $nilaiInput[$key] !== ''
+                    ? (int) $nilaiInput[$key]
+                    : null;
+
+                if ($nilai !== null) {
+                    $terisi[] = $nilai;
+                }
+
+                $detail[$key] = [
+                    'nilai' => $nilai,
+                    'catatan' => $catatan,
+                ];
+
+                continue;
+            }
+
+            $sub = [];
+            $jumlahSub = 0;
+            $terisiSub = 0;
+
+            foreach ($row['sub'] as $i => $subDef) {
+                $subNilai = isset($nilaiInput[$key]['sub'][$i]) && $nilaiInput[$key]['sub'][$i] !== ''
+                    ? (int) $nilaiInput[$key]['sub'][$i]
+                    : null;
+
+                $subCatatan = $catatanPoin[$key][$i] ?? null;
+                $subCatatan = is_array($subCatatan) ? null : $subCatatan; // defensif
+                $subCatatan = $subCatatan !== null && $subCatatan !== '' ? $subCatatan : null;
+
+                if ($subNilai !== null) {
+                    $jumlahSub += $subNilai;
+                    $terisiSub++;
+                }
+
+                $sub[] = [
+                    'nilai' => $subNilai,
+                    'catatan' => $subCatatan,
+                ];
+            }
+
+            $rata = $terisiSub > 0 ? round($jumlahSub / $terisiSub, 2) : null;
+
+            if ($rata !== null) {
+                $terisi[] = $rata;
+            }
+
+            $detail[$key] = [
+                'nilai' => $rata,
+                'catatan' => $catatan,
+                'sub' => $sub,
+            ];
         }
 
-        return $nilai;
+        $jumlah = array_sum($terisi);
+        $rata = $terisi === [] ? null : round($jumlah / count($terisi), 2);
+
+        return [
+            'detail' => $detail,
+            'jumlah' => $jumlah,
+            'rata' => $rata,
+        ];
     }
 
     /**
@@ -153,17 +250,37 @@ class FormPenilaianController extends Controller
      *
      * @return array<string, mixed>
      */
-    private function rules(?PenilaianKinerja $penilaian = null): array
+    private function rules(?PenilaianKinerja $penilaian = null, string $kategori = 'pegawai'): array
     {
         $rules = [
             'periode_id' => 'required|integer|exists:periode_penilaian,id',
             'pejabat_penilai_id' => 'required|integer|exists:pejabat_penilai,id',
+            'status_kepegawaian_id' => 'required|integer|exists:status_kepegawaian,id',
+            'nilai' => 'nullable|array',
+            'catatan_baris' => 'nullable|array',
+            'catatan_poin' => 'nullable|array',
             'catatan' => 'nullable|string',
-            'status' => ['required', Rule::in(array_keys(PenilaianKinerja::STATUSES))],
         ];
 
-        foreach (array_keys(PenilaianKinerja::ASPEK) as $kolom) {
-            $rules[$kolom] = 'nullable|integer|min:0|max:4';
+        // Aturan per baris nilai & catatan (termasuk sub-poin).
+        foreach (PenilaianKinerja::getItems($kategori) as $row) {
+            if (($row['type'] ?? '') !== 'item') {
+                continue;
+            }
+
+            $key = $row['key'];
+
+            $rules['catatan_baris.'.$key] = 'nullable|string|max:500';
+
+            if (empty($row['sub'])) {
+                $rules['nilai.'.$key] = 'nullable|integer|min:0|max:4';
+                continue;
+            }
+
+            foreach ($row['sub'] as $i => $subDef) {
+                $rules['nilai.'.$key.'.sub.'.$i] = 'nullable|integer|min:0|max:4';
+                $rules['catatan_poin.'.$key.'.'.$i] = 'nullable|string|max:500';
+            }
         }
 
         $rules['pegawai_id'] = [
@@ -183,15 +300,31 @@ class FormPenilaianController extends Controller
      *
      * @return array<string, string>
      */
-    private function messages(): array
+    private function messages(string $kategori = 'pegawai'): array
     {
         $messages = [
             'pegawai_id.unique' => 'Pegawai tersebut sudah dinilai pada periode yang dipilih.',
         ];
 
-        foreach (array_keys(PenilaianKinerja::ASPEK) as $kolom) {
-            $messages[$kolom.'.max'] = 'Nilai setiap aspek maksimal 4.';
-            $messages[$kolom.'.min'] = 'Nilai setiap aspek minimal 0.';
+        // Pesan min/max untuk setiap baris nilai (induk & sub-poin).
+        foreach (PenilaianKinerja::getItems($kategori) as $row) {
+            if (($row['type'] ?? '') !== 'item') {
+                continue;
+            }
+
+            $key = $row['key'];
+
+            if (empty($row['sub'])) {
+                $messages['nilai.'.$key.'.max'] = 'Nilai "'.$row['uraian'].'" maksimal 4.';
+                $messages['nilai.'.$key.'.min'] = 'Nilai "'.$row['uraian'].'" minimal 0.';
+                continue;
+            }
+
+            foreach ($row['sub'] as $i => $subDef) {
+                $label = $row['uraian'].' ('.chr(97 + $i).'. '.$subDef['uraian'].')';
+                $messages['nilai.'.$key.'.sub.'.$i.'.max'] = 'Nilai "'.$label.'" maksimal 4.';
+                $messages['nilai.'.$key.'.sub.'.$i.'.min'] = 'Nilai "'.$label.'" minimal 0.';
+            }
         }
 
         return $messages;
@@ -208,6 +341,7 @@ class FormPenilaianController extends Controller
             'pegawai_id' => 'pegawai',
             'periode_id' => 'periode',
             'pejabat_penilai_id' => 'pejabat penilai',
+            'status_kepegawaian_id' => 'status kepegawaian',
         ];
     }
 }

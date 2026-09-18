@@ -67,7 +67,6 @@
                     <th>Periode</th>
                     <th class="text-end" width="110">Nilai Total</th>
                     <th width="120">Predikat</th>
-                    <th width="120">Status</th>
                     <th width="100">Aksi</th>
                 </tr>
             </thead>
@@ -82,16 +81,18 @@
                     <td>{{ $laporan->periode?->label ?? '-' }}</td>
                     <td class="text-end">{{ $laporan->nilai_total !== null ? number_format((float) $laporan->nilai_total, 2, ',', '.') : '-' }}</td>
                     <td>{{ $laporan->predikat ?: '-' }}</td>
-                    <td>{{ \App\Models\PenilaianKinerja::STATUSES[$laporan->status] ?? $laporan->status }}</td>
                     <td>
-                        <a href="{{ route('laporan-penilaian.detail', $laporan->id) }}" class="btn btn-sm btn-info">
-                            <i class="bi bi-eye"></i> Detail
+                        <a href="{{ route('laporan-penilaian.detail', $laporan->id) }}" class="btn btn-sm btn-info" title="Detail">
+                            <i class="bi bi-eye"></i>
+                        </a>
+                        <a href="{{ route('print.penilaian', $laporan->id) }}" target="_blank" class="btn btn-sm btn-success" title="Print">
+                            <i class="bi bi-printer"></i>
                         </a>
                     </td>
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="10" class="text-center">Belum ada data laporan penilaian</td>
+                    <td colspan="9" class="text-center">Belum ada data laporan penilaian</td>
                 </tr>
                 @endforelse
             </tbody>

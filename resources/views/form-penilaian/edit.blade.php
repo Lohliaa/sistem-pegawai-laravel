@@ -39,53 +39,58 @@
                 </div>
             </div>
 
-            <div class="mb-3 mt-3">
-                <label for="pejabat_penilai_id" class="form-label">Pejabat Penilai <span class="text-danger">*</span></label>
-                <select name="pejabat_penilai_id" id="pejabat_penilai_id" class="form-select" required>
-                    <option value="">-- Pilih Pejabat --</option>
-                    @foreach($pejabats as $pejabat)
-                        <option value="{{ $pejabat->id }}" @selected(old('pejabat_penilai_id', $penilaian->pejabat_penilai_id) === $pejabat->id)>{{ $pejabat->nama }}{{ $pejabat->jabatan ? ' - '.$pejabat->jabatan : '' }}</option>
-                    @endforeach
-                </select>
-            </div>
-
-            <hr>
-            <h5 class="mb-3"><i class="bi bi-stars"></i> Nilai Aspek Penilaian (0-4)</h5>
-
-            @foreach($aspek as $kolom => $info)
-            <div class="row g-3 align-items-end mb-3">
-                <div class="col-md-5">
-                    <label for="{{ $kolom }}" class="form-label">{{ $info['label'] }} <span class="text-muted">({{ $info['kode'] }})</span></label>
+            <div class="row g-3 mt-3">
+                <div class="col-md-6">
+                    <label for="pejabat_penilai_id" class="form-label">Pejabat Penilai <span class="text-danger">*</span></label>
+                    <select name="pejabat_penilai_id" id="pejabat_penilai_id" class="form-select" required>
+                        <option value="">-- Pilih Pejabat --</option>
+                        @foreach($pejabats as $pejabat)
+                            <option value="{{ $pejabat->id }}" @selected(old('pejabat_penilai_id', $penilaian->pejabat_penilai_id) == $pejabat->id)>{{ $pejabat->nama }}</option>
+                        @endforeach
+                    </select>
                 </div>
-                <div class="col-md-2">
-                    <input type="number" name="{{ $kolom }}" id="{{ $kolom }}" class="form-control"
-                           min="0" max="4" step="1" value="{{ old($kolom, $penilaian->{$kolom}) }}">
-                </div>
-                <div class="col-md-5">
-                    <select class="form-select" disabled>
-                        <option value="0" @selected(($penilaian->{$kolom} ?? 0) === 0)>0 - Kurang</option>
-                        <option value="1" @selected(($penilaian->{$kolom} ?? 0) === 1)>1 - Kurang</option>
-                        <option value="2" @selected(($penilaian->{$kolom} ?? 0) === 2)>2 - Cukup</option>
-                        <option value="3" @selected(($penilaian->{$kolom} ?? 0) === 3)>3 - Baik</option>
-                        <option value="4" @selected(($penilaian->{$kolom} ?? 0) === 4)>4 - Sangat Baik</option>
+                <div class="col-md-6">
+                    <label for="status_kepegawaian_id" class="form-label">Status Kepegawaian <span class="text-danger">*</span></label>
+                    <select name="status_kepegawaian_id" id="status_kepegawaian_id" class="form-select" required>
+                        <option value="">-- Pilih Status --</option>
+                        @foreach($statusKepegawaians as $status)
+                            <option value="{{ $status->id }}" @selected(old('status_kepegawaian_id', $penilaian->status_kepegawaian_id) == $status->id)>{{ $status->nama_status }}</option>
+                        @endforeach
                     </select>
                 </div>
             </div>
-            @endforeach
 
-            <div class="mb-3">
+            <hr>
+            <h5 class="mb-3"><i class="bi bi-list-check"></i> Rincian Penilaian (0-4)</h5>
+
+            @php
+                $storedDetail = $penilaian->detail_penilaian ?? [];
+                $currentDetail = [];
+                $kategori = $kategori ?? $penilaian->kategori ?? 'pegawai';
+                foreach (\App\Models\PenilaianKinerja::itemKeys($kategori) as $itemKey) {
+                    $storedRow = $storedDetail[$itemKey] ?? [];
+
+                    $currentDetail[$itemKey] = [
+                        'nilai' => old('nilai.'.$itemKey, $storedRow['nilai'] ?? ''),
+                        'catatan' => old('catatan_baris.'.$itemKey, $storedRow['catatan'] ?? ''),
+                    ];
+
+                    $definisi = \App\Models\PenilaianKinerja::itemByKey($itemKey, $kategori);
+                    foreach ($definisi['sub'] ?? [] as $i => $subDef) {
+                        $storedSub = $storedRow['sub'][$i] ?? [];
+                        $currentDetail[$itemKey]['sub'][$i] = [
+                            'nilai' => old('nilai.'.$itemKey.'.sub.'.$i, $storedSub['nilai'] ?? ''),
+                            'catatan' => old('catatan_poin.'.$itemKey.'.'.$i, $storedSub['catatan'] ?? ''),
+                        ];
+                    }
+                }
+            @endphp
+            @include('partials.form-penilaian-table', ['items' => $items, 'current' => $currentDetail])
+
+            <div class="mb-3 mt-3">
                 <label for="catatan" class="form-label">Catatan</label>
                 <textarea name="catatan" id="catatan" rows="3" class="form-control"
                           placeholder="Catatan tambahan (opsional)">{{ old('catatan', $penilaian->catatan) }}</textarea>
-            </div>
-
-            <div class="mb-3">
-                <label for="status" class="form-label">Status <span class="text-danger">*</span></label>
-                <select name="status" id="status" class="form-select" required>
-                    @foreach($statuses as $nilai => $label)
-                        <option value="{{ $nilai }}" @selected(old('status', $penilaian->status) === $nilai)>{{ $label }}</option>
-                    @endforeach
-                </select>
             </div>
 
             <div class="mt-4">

@@ -54,15 +54,19 @@ Route::middleware('auth')->group(function () {
         Route::get('profile-pegawai/{id}/export', [ProfilePegawaiController::class, 'export'])->name('profile-pegawai.export');
         
         // Manajemen User
+        Route::get('manajemen-user/template', [ManajemenUserController::class, 'templateExcel'])->name('manajemen-user.template');
         Route::resource('manajemen-user', ManajemenUserController::class);
         Route::get('manajemen-user/export/excel', [ManajemenUserController::class, 'exportExcel'])->name('manajemen-user.export');
+        Route::post('manajemen-user/upload-excel', [ManajemenUserController::class, 'importExcel'])->name('manajemen-user.import');
         
         // Data MOU
+        Route::get('data-mou/template', [DataMouController::class, 'template'])->name('data-mou.template');
         Route::resource('data-mou', DataMouController::class);
         Route::post('data-mou/import', [DataMouController::class, 'import'])->name('data-mou.import');
         Route::get('data-mou/export/excel', [DataMouController::class, 'export'])->name('data-mou.export');
         
         // Data SK
+        Route::get('data-sk/template', [DataSkController::class, 'template'])->name('data-sk.template');
         Route::resource('data-sk', DataSkController::class);
         Route::post('data-sk/import', [DataSkController::class, 'import'])->name('data-sk.import');
         Route::get('data-sk/export/excel', [DataSkController::class, 'export'])->name('data-sk.export');
@@ -98,3 +102,4 @@ Route::middleware('auth')->group(function () {
     });
 });
 
+Route::get('/print/penilaian/{id}', [\App\Http\Controllers\PrintController::class, 'cetak'])->name('print.penilaian');

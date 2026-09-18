@@ -34,11 +34,7 @@
             <tr>
                 <th>Status</th>
                 <td>
-                    @if($pejabat->status_aktif === \App\Models\PejabatPenilai::STATUS_AKTIF)
-                        <span class="badge bg-success">Aktif</span>
-                    @else
-                        <span class="badge bg-secondary">Nonaktif</span>
-                    @endif
+                    <span class="badge bg-info text-dark">{{ $pejabat->status ?: '-' }}</span>
                 </td>
             </tr>
             <tr>

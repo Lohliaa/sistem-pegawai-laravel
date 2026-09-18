@@ -9,15 +9,7 @@ class PenilaianKinerja extends Model
 {
     protected $table = 'penilaian_kinerja';
 
-    public const STATUS_DRAFT = 'draft';
-    public const STATUS_SUBMITTED = 'submitted';
-    public const STATUS_APPROVED = 'approved';
 
-    public const STATUSES = [
-        self::STATUS_DRAFT => 'Draft',
-        self::STATUS_SUBMITTED => 'Diajukan',
-        self::STATUS_APPROVED => 'Disetujui',
-    ];
 
     /**
      * Daftar aspek penilaian beserta kode & labelnya.
@@ -37,6 +29,89 @@ class PenilaianKinerja extends Model
     public const NILAI_MIN = 0;
     public const NILAI_MAX = 4;
 
+    /**
+     * Struktur rincian item penilaian berdasarkan kategori.
+     *
+     * @var array<string, array<int, array<string, mixed>>>
+     */
+    public const ITEMS_BY_CATEGORY = [
+        'guru-alquran' => [
+            ['type' => 'section', 'label' => 'I. KOMPETENSI AL-QUR\'AN (40%)'],
+            ['type' => 'item', 'key' => 'tahsin', 'uraian' => 'Kualitas Tahsin/Fashohah'],
+            ['type' => 'item', 'key' => 'tahfidz', 'uraian' => 'Capaian & Kualitas Tahfidz'],
+            ['type' => 'item', 'key' => 'tajwid', 'uraian' => 'Pemahaman Ilmu Tajwid'],
+
+            ['type' => 'section', 'label' => 'II. KOMITMEN & KEISLAMAN (30%)'],
+            ['type' => 'item', 'key' => 'kehadiran', 'uraian' => 'Kedisiplinan & Kehadiran Halaqah'],
+            ['type' => 'item', 'key' => 'tilawah', 'uraian' => 'Tilawah Harian & Shalat Berjamaah'],
+            ['type' => 'item', 'key' => 'bpi', 'uraian' => 'Partisipasi Pembinaan (BPI)'],
+
+            ['type' => 'section', 'label' => 'III. METODOLOGI & KINERJA (30%)'],
+            ['type' => 'item', 'key' => 'metode', 'uraian' => 'Penguasaan Metode Pengajaran Al-Qur\'an'],
+            ['type' => 'item', 'key' => 'administrasi', 'uraian' => 'Ketertiban Administrasi & Mutabaah Siswa'],
+        ],
+        'default' => [
+            ['type' => 'section', 'label' => 'I. KOMPETENSI (25%)'],
+            ['type' => 'item', 'key' => 'kompetensi_ukg', 'uraian' => 'Hasil UKG/Uji Kompetensi'],
+
+            ['type' => 'section', 'label' => 'II. KOMITMEN (35%)'],
+
+            ['type' => 'sub', 'label' => 'A. KEDISIPLINAN'],
+            ['type' => 'item', 'key' => 'kehadiran_sekolah', 'uraian' => 'Kehadiran di Sekolah'],
+            ['type' => 'item', 'key' => 'hadir_tepat_waktu', 'uraian' => 'Hadir Tepat Waktu'],
+
+            ['type' => 'sub', 'label' => 'B. KEISLAMAN'],
+            ['type' => 'item', 'key' => 'shalat_awal_waktu', 'uraian' => 'Shalat Awal Waktu (bagi ustadzah) / Berjamaah (bagi ustadz)'],
+            ['type' => 'item', 'key' => 'tilawah_harian', 'uraian' => 'Tilawah minimal 1/2 juz per hari'],
+            ['type' => 'item', 'key' => 'hafalan_1_juz', 'uraian' => 'Hafalan minimal 1 juz'],
+            ['type' => 'item', 'key' => 'bpi_kehadiran', 'uraian' => 'Kehadiran Pembinaan Keislaman (BPI)', 'sub' => [
+                ['uraian' => 'Selalu hadir'],
+                ['uraian' => 'Mengikuti seluruh rangkaian (baramij) BPI'],
+                ['uraian' => 'Berpartisipasi aktif (diskusi, dsb)'],
+                ['uraian' => 'Mengikuti kegiatan pendukung BPI (JI/Mukhoyyam, dsb)'],
+            ]],
+
+            ['type' => 'sub', 'label' => 'C. PENGEMBANGAN DIRI'],
+            ['type' => 'item', 'key' => 'bpi_implementasi', 'uraian' => 'Implementasi Materi BPI', 'sub' => [
+                ['uraian' => 'Perilaku (verbal non-verbal)'],
+                ['uraian' => 'Tata cara berpakaian'],
+                ['uraian' => 'Cara/pola berfikir'],
+            ]],
+            ['type' => 'item', 'key' => 'membaca_buku', 'uraian' => 'Membaca buku'],
+            ['type' => 'item', 'key' => 'pelatihan', 'uraian' => 'Mengikuti pelatihan/pembekalan (diselenggarakan lembaga maupun ikut mandiri)'],
+
+            ['type' => 'section', 'label' => 'III. KINERJA (40%)'],
+            ['type' => 'item', 'key' => 'okr_individu', 'uraian' => 'Capaian OKR Individu'],
+            ['type' => 'item', 'key' => 'kerja_harian', 'uraian' => 'Capaian Kerja Harian'],
+            ['type' => 'item', 'key' => 'jobdes', 'uraian' => 'Capaian Jobdes'],
+            ['type' => 'item', 'key' => 'tugas_tambahan', 'uraian' => 'Tugas Tambahan'],
+            ['type' => 'item', 'key' => 'ketertiban_shalat', 'uraian' => 'Pendampingan ketertiban shalat', 'sub' => [
+                ['uraian' => 'Mengarahkan siswa sholat tertib'],
+                ['uraian' => 'Mengarahkan siswa sholat tepat waktu'],
+            ]],
+            ['type' => 'item', 'key' => 'ketertiban_wudhu', 'uraian' => 'Pendampingan ketertiban wudhu', 'sub' => [
+                ['uraian' => 'Memastikan tatacara benar'],
+                ['uraian' => 'Memastikan sesuai aturan'],
+            ]],
+            ['type' => 'item', 'key' => 'akhlak_siswa', 'uraian' => 'Pendampingan akhlak siswa', 'sub' => [
+                ['uraian' => 'Sopan dalam bersikap'],
+                ['uraian' => 'Menghormati guru'],
+                ['uraian' => 'Menyayangi teman'],
+                ['uraian' => 'Santun dalam berbicara'],
+            ]],
+        ],
+    ];
+
+    /**
+     * Struktur rincian item penilaian (isi kolom uraian pada form penilaian).
+     *
+     * type: section = judul bagian utama, sub = judul sub bagian, item = baris nilai.
+     *
+     * @var array<int, array<string, mixed>>
+     */
+    public const ITEM = []; // Kept for backward compatibility, will be replaced by getItemsByCategory
+
+
     protected $fillable = [
         'pegawai_id',
         'periode_id',
@@ -48,8 +123,10 @@ class PenilaianKinerja extends Model
         'nilai_kerjasama',
         'nilai_kepemimpinan',
         'nilai_total',
+        'detail_penilaian',
         'catatan',
         'status',
+        'kategori',
     ];
 
     protected $casts = [
@@ -60,6 +137,7 @@ class PenilaianKinerja extends Model
         'nilai_kerjasama' => 'integer',
         'nilai_kepemimpinan' => 'integer',
         'nilai_total' => 'decimal:2',
+        'detail_penilaian' => 'array',
     ];
 
     // Relationships
@@ -78,6 +156,11 @@ class PenilaianKinerja extends Model
         return $this->belongsTo(PejabatPenilai::class, 'pejabat_penilai_id');
     }
 
+    public function statusKepegawaian()
+    {
+        return $this->belongsTo(StatusKepegawaian::class, 'status_kepegawaian_id');
+    }
+
     /**
      * Nama kolom nilai aspek.
      *
@@ -86,6 +169,76 @@ class PenilaianKinerja extends Model
     public static function aspekColumns(): array
     {
         return array_keys(self::ASPEK);
+    }
+
+    /**
+     * Ambil item penilaian berdasarkan kategori.
+     */
+    public static function getItems(string $kategori = 'pegawai'): array
+    {
+        return self::ITEMS_BY_CATEGORY[$kategori] ?? self::ITEMS_BY_CATEGORY['default'];
+    }
+
+    /**
+     * Kunci seluruh item penilaian berdasarkan kategori.
+     */
+    public static function itemKeys(string $kategori = 'pegawai'): array
+    {
+        return collect(self::getItems($kategori))
+            ->where('type', 'item')
+            ->pluck('key')
+            ->values()
+            ->all();
+    }
+
+    /**
+     * Ambil definisi item penilaian berdasarkan kunci dan kategori.
+     */
+    public static function itemByKey(string $key, string $kategori = 'pegawai'): ?array
+    {
+        foreach (self::getItems($kategori) as $item) {
+            if (($item['type'] ?? '') === 'item' && ($item['key'] ?? '') === $key) {
+                return $item;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Rincian nilai tersimpan digabung dengan definisi uraian item.
+     */
+    public function detailItems(?string $kategori = null): array
+    {
+        $kategori = $kategori ?? $this->kategori ?? 'pegawai';
+        $stored = is_array($this->detail_penilaian) ? $this->detail_penilaian : [];
+
+        return collect(self::getItems($kategori))
+            ->where('type', 'item')
+            ->map(function (array $item) use ($stored) {
+                $value = $stored[$item['key']] ?? [];
+
+                $entry = array_merge($item, [
+                    'nilai' => $value['nilai'] ?? null,
+                    'catatan' => $value['catatan'] ?? null,
+                ]);
+
+                if (! empty($item['sub'])) {
+                    $subEntries = [];
+                    foreach ($item['sub'] as $i => $subDef) {
+                        $subValue = $value['sub'][$i] ?? [];
+                        $subEntries[] = [
+                            'index' => $i,
+                            'uraian' => $subDef['uraian'],
+                            'nilai' => $subValue['nilai'] ?? null,
+                            'catatan' => $subValue['catatan'] ?? null,
+                        ];
+                    }
+                    $entry['sub'] = $subEntries;
+                }
+                return $entry;
+            })
+            ->values()
+            ->all();
     }
 
     /**
@@ -149,14 +302,6 @@ class PenilaianKinerja extends Model
     }
 
     /**
-     * Penilaian masih bisa diubah bila belum disetujui.
-     */
-    public function isEditable(): bool
-    {
-        return $this->status !== self::STATUS_APPROVED;
-    }
-
-    /**
      * Filter laporan/form penilaian.
      *
      * @param  array<string, mixed>  $filters
@@ -164,9 +309,9 @@ class PenilaianKinerja extends Model
     public function scopeFilter(Builder $query, array $filters): Builder
     {
         return $query
-            ->when(! empty($filters['pegawai_id']), fn (Builder $q) => $q->where($q->qualifyColumn('pegawai_id'), $filters['pegawai_id']))
-            ->when(! empty($filters['periode_id']), fn (Builder $q) => $q->where($q->qualifyColumn('periode_id'), $filters['periode_id']))
-            ->when(! empty($filters['pejabat_penilai_id']), fn (Builder $q) => $q->where($q->qualifyColumn('pejabat_penilai_id'), $filters['pejabat_penilai_id']))
-            ->when(! empty($filters['status']), fn (Builder $q) => $q->where($q->qualifyColumn('status'), $filters['status']));
+            ->when(! empty($filters['pegawai_id']), fn(Builder $q) => $q->where($q->qualifyColumn('pegawai_id'), $filters['pegawai_id']))
+            ->when(! empty($filters['periode_id']), fn(Builder $q) => $q->where($q->qualifyColumn('periode_id'), $filters['periode_id']))
+            ->when(! empty($filters['pejabat_penilai_id']), fn(Builder $q) => $q->where($q->qualifyColumn('pejabat_penilai_id'), $filters['pejabat_penilai_id']))
+            ->when(! empty($filters['status']), fn(Builder $q) => $q->where($q->qualifyColumn('status'), $filters['status']));
     }
 }

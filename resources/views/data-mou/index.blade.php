@@ -114,7 +114,12 @@
             </div>
             <div class="modal-body">
                 <input type="file" name="file_excel" class="form-control" accept=".xls,.xlsx,.csv,.txt" required>
-                <small class="text-muted">Format: .xls, .xlsx, .csv, .txt (maks 5 MB)</small>
+                <small class="text-muted">Format: .xls, .xlsx, .csv, .txt (maks 10 MB)</small>
+                <div class="mt-3">
+                    <a href="{{ route('data-mou.template') }}" class="btn btn-sm btn-outline-secondary">
+                        <i class="bi bi-file-earmark-arrow-down"></i> Download Template
+                    </a>
+                </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>

@@ -37,9 +37,45 @@
                     @endforeach
                 </select>
             </div>
+            <div class="mb-3">
+                <label for="pegawai_id" class="form-label">Hubungkan ke Pegawai (Opsional)</label>
+                <select name="pegawai_id" id="pegawai_id" class="form-select">
+                    <option value="">-- Pilih Pegawai atau Ketik Baru di Bawah --</option>
+                    @foreach($pegawais as $pegawai)
+                        <option value="{{ $pegawai->id }}" @selected(old('pegawai_id') == $pegawai->id)>{{ $pegawai->nama }} ({{ $pegawai->jabatan ?? '-' }})</option>
+                    @endforeach
+                </select>
+                <small class="text-muted">Gunakan ini jika profil pegawai sudah ada.</small>
+            </div>
+            <div class="mb-3" id="group_nama">
+                <label for="nama" class="form-label">Nama Pegawai Baru (Jika belum ada)</label>
+                <input type="text" name="nama" id="nama" class="form-control"
+                       value="{{ old('nama') }}" maxlength="255">
+                <small class="text-muted">Gunakan ini jika ingin membuat profil pegawai baru secara otomatis.</small>
+            </div>
             <button type="submit" class="btn btn-primary"><i class="bi bi-save"></i> Simpan</button>
             <a href="{{ route('manajemen-user.index') }}" class="btn btn-secondary">Batal</a>
         </form>
     </div>
 </div>
+
+@push('scripts')
+<script>
+    document.getElementById('pegawai_id').addEventListener('change', function() {
+        const groupNama = document.getElementById('group_nama');
+        const inputNama = document.getElementById('nama');
+        if (this.value) {
+            inputNama.value = '';
+            groupNama.style.display = 'none';
+        } else {
+            groupNama.style.display = 'block';
+        }
+    });
+
+    // Trigger on load
+    if (document.getElementById('pegawai_id').value) {
+        document.getElementById('group_nama').style.display = 'none';
+    }
+</script>
+@endpush
 @endsection
