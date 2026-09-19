@@ -3,30 +3,24 @@
 @section('title', 'Profile Pegawai')
 
 @section('content')
-<div class="d-flex justify-content-between align-items-center mb-3">
-    <div>
-        <h3 class="mb-0"><i class="bi bi-person-badge"></i> Profile Pegawai</h3>
-        <small class="text-muted">Daftar data pegawai.</small>
-    </div>
-    <a href="{{ route('profile-pegawai.create') }}" class="btn btn-primary">
-        <i class="bi bi-plus-circle"></i> Tambah Pegawai
-    </a>
-</div>
-<hr>
 
 @include('partials.errors')
 
 <div class="card mb-3">
     <div class="card-body">
-        <form action="{{ route('profile-pegawai.index') }}" method="GET" class="row g-2 align-items-end">
-            <div class="col-md-6">
+        <form action="{{ route('profile-pegawai.index') }}" method="GET" class="row g-3 align-items-end">
+            <div class="col-md-4">
                 <label class="form-label">Cari</label>
                 <input type="text" name="search" class="form-control" value="{{ request('search') }}"
                        placeholder="Nama / Unit / Jabatan">
             </div>
             <div class="col-auto">
-                <button type="submit" class="btn btn-primary"><i class="bi bi-search"></i> Terapkan</button>
-                <a href="{{ route('profile-pegawai.index') }}" class="btn btn-outline-secondary">Reset</a>
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-primary" title="Terapkan"><i class="bi bi-search"></i></button>
+                    <a href="{{ route('profile-pegawai.create') }}" class="btn btn-success" title="Tambah Pegawai">
+                        <i class="bi bi-plus-circle"></i>
+                    </a>
+                </div>
             </div>
         </form>
     </div>
@@ -54,20 +48,22 @@
                     <td>{{ $pegawai->unit ?: '-' }}</td>
                     <td>{{ $pegawai->jabatan ?: '-' }}</td>
                     <td>
-                        <a href="{{ route('profile-pegawai.show', $pegawai->id) }}" class="btn btn-sm btn-info">
-                            <i class="bi bi-eye"></i>
-                        </a>
-                        <a href="{{ route('profile-pegawai.edit', $pegawai->id) }}" class="btn btn-sm btn-warning">
-                            <i class="bi bi-pencil"></i>
-                        </a>
-                        <form action="{{ route('profile-pegawai.destroy', $pegawai->id) }}" method="POST" class="d-inline">
-                            @csrf
-                            @method('DELETE')
-                            <button type="submit" class="btn btn-sm btn-danger"
-                                    onclick="return confirm('Hapus pegawai {{ $pegawai->nama }}?')">
-                                <i class="bi bi-trash"></i>
-                            </button>
-                        </form>
+                        <div class="d-flex gap-1">
+                            <a href="{{ route('profile-pegawai.show', $pegawai->id) }}" class="btn btn-sm btn-info text-white" title="Detail">
+                                <i class="bi bi-eye"></i>
+                            </a>
+                            <a href="{{ route('profile-pegawai.edit', $pegawai->id) }}" class="btn btn-sm btn-warning text-white" title="Edit">
+                                <i class="bi bi-pencil"></i>
+                            </a>
+                            <form action="{{ route('profile-pegawai.destroy', $pegawai->id) }}" method="POST" class="d-inline">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-sm btn-danger" title="Hapus"
+                                        onclick="return confirm('Hapus pegawai {{ $pegawai->nama }}?')">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </form>
+                        </div>
                     </td>
                 </tr>
                 @empty

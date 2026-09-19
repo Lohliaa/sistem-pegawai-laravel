@@ -53,32 +53,30 @@
                 <img src="{{ asset('img/logo.png') }}" alt="Logo" style="height: 70px; width: auto;">
             </div>
             <div class="flex-grow-1 text-center">
-                <h4 class="fw-bold text-uppercase mb-1">Yayasan Permata Mojokerto</h4>
-                <h5 class="fw-bold text-uppercase mb-1">Penilaian Kinerja Pegawai</h5>
+                <h4 class="fw-bold text-uppercase mb-1">PENILAIAN KINERJA PENDIDIK DAN TENAGA KEPENDIDIKAN</h4>
+                <h4 class="fw-bold text-uppercase mb-1">YAYASAN PERMATA MOJOKERTO</h4>
             </div>
-            <div style="width: 70px;" class="d-none d-print-block"></div> <!-- Spacer for perfect centering if needed, or balance -->
+            <div style="width: 70px;" class="d-none d-print-block"></div>
         </div>
 
         <table class="table table-bordered mb-4">
             <tr>
                 <th width="200">Nama Pegawai</th>
                 <td>{{ $penilaian->pegawai?->nama ?: '-' }}</td>
-                <th width="200">Periode</th>
-                <td>{{ $penilaian->periode?->label ?? '-' }}</td>
+                <th width="200">Pejabat Penilai</th>
+                <td>{{ $penilaian->pejabatPenilai?->nama ?: '-' }}</td>
             </tr>
             <tr>
                 <th>Unit / Jabatan</th>
                 <td>{{ $penilaian->pegawai?->unit ?: '-' }} / {{ $penilaian->pegawai?->jabatan ?: '-' }}</td>
+                <th>Jabatan Penilai</th>
+                <td>{{ $penilaian->pejabatPenilai?->jabatan ?: '-' }}</td>
+            </tr>
+            <tr>
                 <th>Status Kepegawaian</th>
                 <td>{{ $penilaian->statusKepegawaian?->nama_status ?: '-' }}</td>
-            </tr>
-            <tr>
-                <th>Pejabat Penilai</th>
-                <td colspan="3">{{ $penilaian->pejabatPenilai?->nama ?: '-' }}</td>
-            </tr>
-            <tr>
-                <th>Tanggal Cetak</th>
-                <td colspan="3">{{ date('d/m/Y H:i') }}</td>
+                <th>Periode</th>
+                <td>{{ $penilaian->periode?->label ?? '-' }}</td>
             </tr>
         </table>
 
@@ -86,23 +84,27 @@
         @php $detailItems = $penilaian->detailItems(); @endphp
         @if (!empty($detailItems))
         <table class="table table-sm table-bordered align-middle mb-4">
-            <thead class="table-light">
+            <thead class="table-dark text-white">
                 <tr>
-                    <th>Uraian</th>
-                    <th class="text-center" style="width: 80px;">Nilai</th>
-                    <th style="width: 250px;">Catatan</th>
+                    <th class="text-center bg-dark text-white" style="width: 50px;">No</th>
+                    <th class="bg-dark text-white">Uraian</th>
+                    <th class="text-center bg-dark text-white" style="width: 80px;">Nilai</th>
+                    <th class="bg-dark text-white" style="width: 250px;">Catatan</th>
                 </tr>
             </thead>
             <tbody>
-                @php $detailMap = collect($detailItems)->keyBy('key'); @endphp
+                @php 
+                    $detailMap = collect($detailItems)->keyBy('key'); 
+                    $counter = 1;
+                @endphp
                 @foreach(\App\Models\PenilaianKinerja::getItems($penilaian->kategori) as $row)
                 @if (($row['type'] ?? '') === 'section')
-                <tr class="table-secondary">
-                    <td colspan="3" class="fw-bold">{{ $row['label'] }}</td>
+                <tr style="background-color: #b0b8c1;">
+                    <td colspan="4" class="fw-bold">{{ $row['label'] }}</td>
                 </tr>
                 @elseif (($row['type'] ?? '') === 'sub')
                 <tr class="table-light">
-                    <td colspan="3" class="fw-bold ps-3">{{ $row['label'] }}</td>
+                    <td colspan="4" class="fw-bold ps-3">{{ $row['label'] }}</td>
                 </tr>
                 @else
                 @php
@@ -111,12 +113,14 @@
                 @endphp
                 @if (!empty($row['sub']))
                 <tr class="table-light">
+                    <td class="text-center fw-bold">{{ $counter++ }}</td>
                     <td><span class="fw-semibold">{{ $row['uraian'] }}</span></td>
                     <td class="text-center fw-semibold">{{ $nilai !== null ? str_replace('.', ',', rtrim(rtrim(number_format((float) $nilai, 2, '.', ''), '0'), '.')) : '-' }}</td>
                     <td>{{ $isi['catatan'] ?? '-' }}</td>
                 </tr>
                 @foreach($isi['sub'] ?? [] as $subPoin)
                 <tr>
+                    <td></td>
                     <td>
                         <div class="ps-3 small">{{ chr(97 + $subPoin['index']) }}. {{ $subPoin['uraian'] }}</div>
                     </td>
@@ -126,6 +130,7 @@
                 @endforeach
                 @else
                 <tr>
+                    <td class="text-center fw-bold">{{ $counter++ }}</td>
                     <td><span class="fw-semibold">{{ $row['uraian'] }}</span></td>
                     <td class="text-center">{{ $nilai !== null ? str_replace('.', ',', rtrim(rtrim(number_format((float) $nilai, 2, '.', ''), '0'), '.')) : '-' }}</td>
                     <td>{{ $isi['catatan'] ?? '-' }}</td>
@@ -134,7 +139,7 @@
                 @endif
                 @endforeach
                 <tr class="table-light">
-                    <th class="text-end">Nilai Total / Rata-rata</th>
+                    <th class="text-end" colspan="2">Nilai Total / Rata-rata</th>
                     <th class="text-center">{{ $penilaian->nilai_total !== null ? number_format((float) $penilaian->nilai_total, 2, ',', '.') : '-' }}</th>
                     <th>Predikat: {{ $predikat['label'] ?? '-' }} ({{ $predikat['kode'] ?? '-' }})</th>
                 </tr>
@@ -151,14 +156,27 @@
 
         <div class="row mt-5">
             <div class="col-6 text-center">
-                <p>Pejabat Penilai,</p>
+                <p>Kabid/Kanit,</p>
                 <br><br><br>
                 <p><strong>({{ $penilaian->pejabatPenilai?->nama ?? '...................................' }})</strong></p>
             </div>
             <div class="col-6 text-center">
-                <p>Pegawai yang Dinilai,</p>
+                <p>Mojokerto, {{ \Carbon\Carbon::now()->translatedFormat('d F Y') }}<br>Pendidik/Tenaga Kependidikan yang dinilai,</p>
                 <br><br><br>
                 <p><strong>({{ $penilaian->pegawai?->nama ?? '...................................' }})</strong></p>
+            </div>
+        </div>
+
+        <div class="row mt-5">
+            <div class="col-6 text-center">
+                <p>Mengetahui,<br>Ketua Yayasan Permata Mojokerto,</p>
+                <br><br><br>
+                <p><strong>({{ $ketuaYayasan?->nama ?? '...................................' }})</strong></p>
+            </div>
+            <div class="col-6 text-center">
+                <p>Kepala Bidang SDM,</p>
+                <br><br><br>
+                <p><strong>({{ $kabidSdm?->nama ?? '...................................' }})</strong></p>
             </div>
         </div>
     </div>

@@ -52,6 +52,8 @@ class PenilaianKinerja extends Model
         ],
         'default' => [
             ['type' => 'section', 'label' => 'I. KOMPETENSI (25%)'],
+            ['type' => 'item', 'key' => 'coaching', 'uraian' => 'Mengikuti kegiatan Coaching'],
+            ['type' => 'item', 'key' => 'supervisi_kinerja', 'uraian' => 'Hasil Supervisi Kinerja'],
             ['type' => 'item', 'key' => 'kompetensi_ukg', 'uraian' => 'Hasil UKG/Uji Kompetensi'],
 
             ['type' => 'section', 'label' => 'II. KOMITMEN (35%)'],
@@ -61,12 +63,12 @@ class PenilaianKinerja extends Model
             ['type' => 'item', 'key' => 'hadir_tepat_waktu', 'uraian' => 'Hadir Tepat Waktu'],
 
             ['type' => 'sub', 'label' => 'B. KEISLAMAN'],
-            ['type' => 'item', 'key' => 'shalat_awal_waktu', 'uraian' => 'Shalat Awal Waktu (bagi ustadzah) / Berjamaah (bagi ustadz)'],
-            ['type' => 'item', 'key' => 'tilawah_harian', 'uraian' => 'Tilawah minimal 1/2 juz per hari'],
+            ['type' => 'item', 'key' => 'shalat_awal_waktu', 'uraian' => 'Shalat Awal Waktu (bagi ustadzah) / Shalat berjamaah (bagi ustadz)'],
+            ['type' => 'item', 'key' => 'tilawah_harian', 'uraian' => 'Tilawah minimal 1 juz per hari'],
             ['type' => 'item', 'key' => 'hafalan_1_juz', 'uraian' => 'Hafalan minimal 1 juz'],
             ['type' => 'item', 'key' => 'bpi_kehadiran', 'uraian' => 'Kehadiran Pembinaan Keislaman (BPI)', 'sub' => [
                 ['uraian' => 'Selalu hadir'],
-                ['uraian' => 'Mengikuti seluruh rangkaian (baramij) BPI'],
+                ['uraian' => 'Mengikuti seluruh rangkaian kegiatan BPI'],
                 ['uraian' => 'Berpartisipasi aktif (diskusi, dsb)'],
                 ['uraian' => 'Mengikuti kegiatan pendukung BPI (JI/Mukhoyyam, dsb)'],
             ]],
@@ -75,30 +77,18 @@ class PenilaianKinerja extends Model
             ['type' => 'item', 'key' => 'bpi_implementasi', 'uraian' => 'Implementasi Materi BPI', 'sub' => [
                 ['uraian' => 'Perilaku (verbal non-verbal)'],
                 ['uraian' => 'Tata cara berpakaian'],
-                ['uraian' => 'Cara/pola berfikir'],
             ]],
             ['type' => 'item', 'key' => 'membaca_buku', 'uraian' => 'Membaca buku'],
             ['type' => 'item', 'key' => 'pelatihan', 'uraian' => 'Mengikuti pelatihan/pembekalan (diselenggarakan lembaga maupun ikut mandiri)'],
 
             ['type' => 'section', 'label' => 'III. KINERJA (40%)'],
-            ['type' => 'item', 'key' => 'okr_individu', 'uraian' => 'Capaian OKR Individu'],
+            ['type' => 'item', 'key' => 'okr_individu', 'uraian' => 'Capaian OKR Individu', 'sub' => [
+                ['uraian' => 'Melaksanakan Jobdes'],
+                ['uraian' => 'Pendampingan akhlak siswa'],
+                ['uraian' => 'Pendampingan sholat siswa'],
+                ['uraian' => 'Pendampingan wudhu'],
+            ]],
             ['type' => 'item', 'key' => 'kerja_harian', 'uraian' => 'Capaian Kerja Harian'],
-            ['type' => 'item', 'key' => 'jobdes', 'uraian' => 'Capaian Jobdes'],
-            ['type' => 'item', 'key' => 'tugas_tambahan', 'uraian' => 'Tugas Tambahan'],
-            ['type' => 'item', 'key' => 'ketertiban_shalat', 'uraian' => 'Pendampingan ketertiban shalat', 'sub' => [
-                ['uraian' => 'Mengarahkan siswa sholat tertib'],
-                ['uraian' => 'Mengarahkan siswa sholat tepat waktu'],
-            ]],
-            ['type' => 'item', 'key' => 'ketertiban_wudhu', 'uraian' => 'Pendampingan ketertiban wudhu', 'sub' => [
-                ['uraian' => 'Memastikan tatacara benar'],
-                ['uraian' => 'Memastikan sesuai aturan'],
-            ]],
-            ['type' => 'item', 'key' => 'akhlak_siswa', 'uraian' => 'Pendampingan akhlak siswa', 'sub' => [
-                ['uraian' => 'Sopan dalam bersikap'],
-                ['uraian' => 'Menghormati guru'],
-                ['uraian' => 'Menyayangi teman'],
-                ['uraian' => 'Santun dalam berbicara'],
-            ]],
         ],
     ];
 
@@ -116,6 +106,7 @@ class PenilaianKinerja extends Model
         'pegawai_id',
         'periode_id',
         'pejabat_penilai_id',
+        'status_kepegawaian_id',
         'nilai_orientasi_pelayanan',
         'nilai_integritas',
         'nilai_komitmen',
@@ -123,6 +114,7 @@ class PenilaianKinerja extends Model
         'nilai_kerjasama',
         'nilai_kepemimpinan',
         'nilai_total',
+        'jumlah_total',
         'detail_penilaian',
         'catatan',
         'status',

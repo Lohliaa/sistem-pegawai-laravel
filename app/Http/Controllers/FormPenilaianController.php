@@ -72,6 +72,7 @@ class FormPenilaianController extends Controller
             'status_kepegawaian_id' => $validated['status_kepegawaian_id'],
             'detail_penilaian' => $detail['detail'],
             'nilai_total' => $detail['rata'],
+            'jumlah_total' => $detail['jumlah'],
             'catatan' => $validated['catatan'] ?? null,
             'kategori' => $kategori,
         ]);
@@ -118,6 +119,7 @@ class FormPenilaianController extends Controller
             'status_kepegawaian_id' => $validated['status_kepegawaian_id'],
             'detail_penilaian' => $detail['detail'],
             'nilai_total' => $detail['rata'],
+            'jumlah_total' => $detail['jumlah'],
             'catatan' => $validated['catatan'] ?? null,
         ]);
 

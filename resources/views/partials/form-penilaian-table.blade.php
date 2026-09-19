@@ -5,12 +5,14 @@
         ->pluck('key')
         ->values()
         ->all();
+    $counter = 1;
 @endphp
 
 <div class="table-responsive">
     <table class="table table-sm table-bordered align-middle mb-0" id="tabel-penilaian">
         <thead class="table-dark">
             <tr>
+                <th width="50">No</th>
                 <th>Uraian</th>
                 <th class="text-center" style="width: 120px;">Nilai (0-4)</th>
                 <th style="width: 260px;">Catatan</th>
@@ -20,11 +22,11 @@
             @foreach($items as $row)
                 @if (($row['type'] ?? '') === 'section')
                     <tr class="table-primary">
-                        <td colspan="3" class="fw-bold">{{ $row['label'] }}</td>
+                        <td colspan="4" class="fw-bold">{{ $row['label'] }}</td>
                     </tr>
                 @elseif (($row['type'] ?? '') === 'sub')
                     <tr class="table-secondary">
-                        <td colspan="3" class="fw-bold ps-4">{{ $row['label'] }}</td>
+                        <td colspan="4" class="fw-bold ps-4">{{ $row['label'] }}</td>
                     </tr>
                 @else
                     @php
@@ -33,6 +35,7 @@
                     @endphp
                     @if (!empty($row['sub']))
                         <tr class="table-warning">
+                            <td class="text-center fw-bold">{{ $counter++ }}</td>
                             <td><span class="fw-semibold">{{ $row['uraian'] }}</span></td>
                             <td class="text-center fw-semibold" id="nilai-tampil-{{ $key }}">
                                 @if ($currentNilai !== '' && $currentNilai !== null)
@@ -54,6 +57,7 @@
                                 $subCatatan = $current[$key]['sub'][$i]['catatan'] ?? '';
                             @endphp
                             <tr>
+                                <td></td>
                                 <td><div class="ps-4 small">{{ chr(97 + $i) }}. {{ $subDef['uraian'] }}</div></td>
                                 <td class="text-center">
                                     <select name="nilai[{{ $key }}][sub][{{ $i }}]"
@@ -76,6 +80,7 @@
                         @endforeach
                     @else
                         <tr>
+                            <td class="text-center fw-bold">{{ $counter++ }}</td>
                             <td><span class="fw-semibold">{{ $row['uraian'] }}</span></td>
                             <td class="text-center">
                                 <select name="nilai[{{ $key }}]"
@@ -98,7 +103,7 @@
                 @endif
             @endforeach
 <tr class="table-active">
-                <th class="text-end">Total (Jumlah &amp; Rata-rata)</th>
+                <th colspan="2" class="text-end">Total (Jumlah &amp; Rata-rata)</th>
                 <td class="text-center">
                     <div>Jumlah: <strong id="total-jumlah">0,00</strong></div>
                     <div>Rata-rata: <strong id="total-rata">0,00</strong></div>

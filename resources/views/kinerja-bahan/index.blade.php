@@ -18,17 +18,6 @@
 
 <div class="card">
     <div class="card-body">
-        <form action="{{ route('kinerja-bahan.index') }}" method="GET" class="row g-2 mb-3">
-            <div class="col-md-4">
-                <input type="text" name="search" class="form-control" value="{{ request('search') }}"
-                       placeholder="Cari nama bahan / keterangan">
-            </div>
-            <div class="col-auto">
-                <button type="submit" class="btn btn-outline-primary"><i class="bi bi-search"></i> Cari</button>
-                <a href="{{ route('kinerja-bahan.index') }}" class="btn btn-outline-secondary">Reset</a>
-            </div>
-        </form>
-
         <table class="table table-striped align-middle">
             <thead class="table-dark">
                 <tr>

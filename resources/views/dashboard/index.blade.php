@@ -3,9 +3,6 @@
 @section('title', 'Dashboard')
 
 @section('content')
-<h2>Dashboard</h2>
-<hr>
-
 <!-- Detail Profile Pegawai -->
 <div class="card mb-4 shadow-sm" style="border-left: 4px solid #3498db;">
     <div class="card-header bg-primary text-white">

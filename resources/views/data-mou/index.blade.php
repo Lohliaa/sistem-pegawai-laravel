@@ -3,24 +3,6 @@
 @section('title', 'Data MOU')
 
 @section('content')
-<div class="d-flex justify-content-between align-items-center mb-3">
-    <div>
-        <h3 class="mb-0"><i class="bi bi-file-earmark-ruled"></i> Data MOU</h3>
-        <small class="text-muted">Daftar data MOU (Master Outsource / Upah) pegawai.</small>
-    </div>
-    <div class="d-flex gap-2">
-        <a href="{{ route('data-mou.export') }}" class="btn btn-success">
-            <i class="bi bi-download"></i> Export Excel
-        </a>
-        <label class="btn btn-outline-primary mb-0" data-bs-toggle="modal" data-bs-target="#importModal">
-            <i class="bi bi-upload"></i> Import Excel
-        </label>
-        <a href="{{ route('data-mou.create') }}" class="btn btn-primary">
-            <i class="bi bi-plus-circle"></i> Tambah
-        </a>
-    </div>
-</div>
-<hr>
 
 @include('partials.errors')
 
@@ -42,8 +24,18 @@
                 </select>
             </div>
             <div class="col-auto">
-                <button type="submit" class="btn btn-primary"><i class="bi bi-search"></i> Terapkan</button>
-                <a href="{{ route('data-mou.index') }}" class="btn btn-outline-secondary">Reset</a>
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-primary" title="Terapkan"><i class="bi bi-search"></i></button>
+                    <a href="{{ route('data-mou.export') }}" class="btn btn-success text-white" title="Export Excel">
+                        <i class="bi bi-download"></i>
+                    </a>
+                    <label class="btn btn-outline-primary mb-0" data-bs-toggle="modal" data-bs-target="#importModal" title="Import Excel" style="cursor: pointer;">
+                        <i class="bi bi-upload"></i>
+                    </label>
+                    <a href="{{ route('data-mou.create') }}" class="btn btn-primary" title="Tambah">
+                        <i class="bi bi-plus-circle"></i>
+                    </a>
+                </div>
             </div>
         </form>
     </div>

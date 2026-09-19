@@ -3,16 +3,6 @@
 @section('title', 'Form Penilaian - ' . ($kategoriNama ?? 'Pegawai'))
 
 @section('content')
-<div class="d-flex justify-content-between align-items-center mb-3">
-    <div>
-        <h3 class="mb-0"><i class="bi bi-clipboard-check"></i> Form Penilaian - {{ $kategoriNama ?? 'Pegawai' }}</h3>
-        <small class="text-muted">Data penilaian kinerja pegawai kategori {{ $kategoriNama ?? 'Pegawai' }}.</small>
-    </div>
-    <a href="{{ route('form-penilaian.create', ['kategori' => $kategori ?? 'pegawai']) }}" class="btn btn-primary">
-        <i class="bi bi-plus-circle"></i> Tambah Penilaian
-    </a>
-</div>
-<hr>
 
 @include('partials.errors')
 
@@ -48,8 +38,12 @@
                 </select>
             </div>
             <div class="col-auto">
-                <button type="submit" class="btn btn-primary"><i class="bi bi-search"></i> Terapkan</button>
-                <a href="{{ route('form-penilaian.index', ['kategori' => $kategori ?? 'pegawai']) }}" class="btn btn-outline-secondary">Reset</a>
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-primary" title="Terapkan"><i class="bi bi-search"></i></button>
+                    <a href="{{ route('form-penilaian.create', ['kategori' => $kategori ?? 'pegawai']) }}" class="btn btn-success" title="Tambah Penilaian">
+                        <i class="bi bi-plus-circle"></i>
+                    </a>
+                </div>
             </div>
         </form>
     </div>

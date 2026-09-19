@@ -3,31 +3,13 @@
 @section('title', 'Data SK')
 
 @section('content')
-<div class="d-flex justify-content-between align-items-center mb-3">
-    <div>
-        <h3 class="mb-0"><i class="bi bi-file-earmark-text"></i> Data SK</h3>
-        <small class="text-muted">Daftar data SK (Surat Keputusan) pegawai.</small>
-    </div>
-    <div class="d-flex gap-2">
-        <a href="{{ route('data-sk.export') }}" class="btn btn-success">
-            <i class="bi bi-download"></i> Export Excel
-        </a>
-        <label class="btn btn-outline-primary mb-0" data-bs-toggle="modal" data-bs-target="#skImportModal">
-            <i class="bi bi-upload"></i> Import Excel
-        </label>
-        <a href="{{ route('data-sk.create') }}" class="btn btn-primary">
-            <i class="bi bi-plus-circle"></i> Tambah
-        </a>
-    </div>
-</div>
-<hr>
 
 @include('partials.errors')
 
 <div class="card mb-3">
     <div class="card-body">
         <form action="{{ route('data-sk.index') }}" method="GET" class="row g-2 align-items-end">
-            <div class="col-md-5">
+            <div class="col-md-4">
                 <label class="form-label">Cari</label>
                 <input type="text" name="search" class="form-control" value="{{ request('search') }}"
                        placeholder="Nama / No. SK / Unit Kerja">
@@ -42,8 +24,18 @@
                 </select>
             </div>
             <div class="col-auto">
-                <button type="submit" class="btn btn-primary"><i class="bi bi-search"></i> Terapkan</button>
-                <a href="{{ route('data-sk.index') }}" class="btn btn-outline-secondary">Reset</a>
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-primary" title="Terapkan"><i class="bi bi-search"></i></button>
+                    <a href="{{ route('data-sk.export') }}" class="btn btn-success text-white" title="Export Excel">
+                        <i class="bi bi-download"></i>
+                    </a>
+                    <label class="btn btn-outline-primary mb-0" data-bs-toggle="modal" data-bs-target="#skImportModal" title="Import Excel" style="cursor: pointer;">
+                        <i class="bi bi-upload"></i>
+                    </label>
+                    <a href="{{ route('data-sk.create') }}" class="btn btn-primary" title="Tambah">
+                        <i class="bi bi-plus-circle"></i>
+                    </a>
+                </div>
             </div>
         </form>
     </div>

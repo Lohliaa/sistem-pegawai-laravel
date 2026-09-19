@@ -68,6 +68,7 @@
         <table class="table table-sm table-bordered mb-0">
             <thead class="table-dark">
                 <tr>
+                    <th class="text-center" style="width: 50px;">No</th>
                     <th>Uraian</th>
                     <th class="text-center" style="width: 80px;">Nilai</th>
                     <th style="width: 240px;">Catatan</th>
@@ -76,15 +77,16 @@
             <tbody>
                 @php
                     $detailMap = collect($detailItems)->keyBy('key');
+                    $counter = 1;
                 @endphp
                 @foreach(\App\Models\PenilaianKinerja::getItems($penilaian->kategori) as $row)
                     @if (($row['type'] ?? '') === 'section')
                         <tr class="table-primary">
-                            <td colspan="3" class="fw-bold">{{ $row['label'] }}</td>
+                            <td colspan="4" class="fw-bold">{{ $row['label'] }}</td>
                         </tr>
                     @elseif (($row['type'] ?? '') === 'sub')
                         <tr class="table-secondary">
-                            <td colspan="3" class="fw-bold ps-4">{{ $row['label'] }}</td>
+                            <td colspan="4" class="fw-bold ps-4">{{ $row['label'] }}</td>
                         </tr>
                     @else
                         @php
@@ -93,12 +95,14 @@
                         @endphp
                         @if (!empty($row['sub']))
                             <tr class="table-warning">
+                                <td class="text-center fw-bold">{{ $counter++ }}</td>
                                 <td><span class="fw-semibold">{{ $row['uraian'] }}</span></td>
                                 <td class="text-center fw-semibold">{{ $nilai !== null ? str_replace('.', ',', rtrim(rtrim(number_format((float) $nilai, 2, '.', ''), '0'), '.')) : '-' }}</td>
                                 <td>{{ $isi['catatan'] ?? '-' }}</td>
                             </tr>
                             @foreach($isi['sub'] ?? [] as $subPoin)
                                 <tr>
+                                    <td></td>
                                     <td><div class="ps-4 small">{{ chr(97 + $subPoin['index']) }}. {{ $subPoin['uraian'] }}</div></td>
                                     <td class="text-center">{{ $subPoin['nilai'] ?? '-' }}</td>
                                     <td>{{ $subPoin['catatan'] ?? '-' }}</td>
@@ -106,6 +110,7 @@
                             @endforeach
                         @else
                             <tr>
+                                <td class="text-center fw-bold">{{ $counter++ }}</td>
                                 <td><span class="fw-semibold">{{ $row['uraian'] }}</span></td>
                                 <td class="text-center">{{ $nilai ?? '-' }}</td>
                                 <td>{{ $isi['catatan'] ?? '-' }}</td>
@@ -114,12 +119,7 @@
                     @endif
                 @endforeach
                 <tr class="table-active">
-                    <th class="text-end">Total (Jumlah &amp; Rata-rata)</th>
-                    <td class="text-center">
-                        <div>Jumlah: {{ array_sum(array_map(fn ($item) => $item['nilai'] ?? 0, $detailItems)) }}</div>
-                        <div>Rata-rata: {{ $penilaian->nilai_total !== null ? number_format((float) $penilaian->nilai_total, 2, ',', '.') : '-' }}</div>
-                    </td>
-                    <td></td>
+                    <th class="text-end" colspan="4">Total (Jumlah &amp; Rata-rata): {{ $penilaian->nilai_total !== null ? number_format((float) $penilaian->nilai_total, 2, ',', '.') : '-' }}</th>
                 </tr>
             </tbody>
         </table>

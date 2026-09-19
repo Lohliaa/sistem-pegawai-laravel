@@ -57,7 +57,6 @@
                     <th>Pegawai</th>
                     <th>Periode</th>
                     <th width="110">Nilai Total</th>
-                    <th width="120">Status</th>
                     <th width="240">Aksi</th>
                 </tr>
             </thead>
@@ -68,7 +67,6 @@
                     <td>{{ $penilaian->pegawai?->nama ?? '-' }}</td>
                     <td>{{ $penilaian->periode?->label ?? '-' }}</td>
                     <td>{{ $penilaian->nilai_total !== null ? number_format((float) $penilaian->nilai_total, 2) : '-' }}</td>
-                    <td>{{ \App\Models\PenilaianKinerja::STATUSES[$penilaian->status] ?? $penilaian->status }}</td>
                     <td>
                         <a href="{{ route('form-penilaian.show', $penilaian->id) }}" class="btn btn-sm btn-info">
                             <i class="bi bi-eye"></i> Detail

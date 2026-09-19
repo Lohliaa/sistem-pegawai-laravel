@@ -3,31 +3,13 @@
 @section('title', 'Manajemen User')
 
 @section('content')
-<div class="d-flex justify-content-between align-items-center mb-3">
-    <div>
-        <h3 class="mb-0"><i class="bi bi-people"></i> Manajemen User</h3>
-        <small class="text-muted">Kelola akun pengguna sistem.</small>
-    </div>
-    <div class="d-flex gap-2">
-        <a href="{{ route('manajemen-user.export') }}" class="btn btn-success">
-            <i class="bi bi-download"></i> Export Excel
-        </a>
-        <label class="btn btn-outline-primary mb-0" data-bs-toggle="modal" data-bs-target="#userImportModal">
-            <i class="bi bi-upload"></i> Upload Excel User
-        </label>
-        <a href="{{ route('manajemen-user.create') }}" class="btn btn-primary">
-            <i class="bi bi-plus-circle"></i> Tambah User
-        </a>
-    </div>
-</div>
-<hr>
 
 @include('partials.errors')
 
 <div class="card mb-3">
     <div class="card-body">
         <form action="{{ route('manajemen-user.index') }}" method="GET" class="row g-2 align-items-end">
-            <div class="col-md-5">
+            <div class="col-md-4">
                 <label class="form-label">Cari</label>
                 <input type="text" name="search" class="form-control" value="{{ request('search') }}"
                        placeholder="Username / Nama Pegawai">
@@ -42,8 +24,18 @@
                 </select>
             </div>
             <div class="col-auto">
-                <button type="submit" class="btn btn-primary"><i class="bi bi-search"></i> Terapkan</button>
-                <a href="{{ route('manajemen-user.index') }}" class="btn btn-outline-secondary">Reset</a>
+                <div class="d-flex gap-2">
+                    <button type="submit" class="btn btn-primary" title="Terapkan"><i class="bi bi-search"></i></button>
+                    <a href="{{ route('manajemen-user.export') }}" class="btn btn-success text-white" title="Export Excel">
+                        <i class="bi bi-download"></i>
+                    </a>
+                    <label class="btn btn-outline-primary mb-0" data-bs-toggle="modal" data-bs-target="#userImportModal" title="Upload Excel User" style="cursor: pointer;">
+                        <i class="bi bi-upload"></i>
+                    </label>
+                    <a href="{{ route('manajemen-user.create') }}" class="btn btn-primary" title="Tambah User">
+                        <i class="bi bi-plus-circle"></i>
+                    </a>
+                </div>
             </div>
         </form>
     </div>
