@@ -1,15 +1,22 @@
 @extends('layouts.app')
 
-@section('title', 'Tambah Penilaian')
+@section('title', 'Tambah Penilaian - ' . ($kategoriNama ?? 'Pegawai'))
 
 @section('content')
 
 @include('partials.errors')
 
 <div class="card">
+    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+        <h5 class="mb-0"><i class="bi bi-plus-circle"></i> Tambah Penilaian - {{ $kategoriNama ?? 'Pegawai' }}</h5>
+        <a href="{{ route('form-penilaian.index', ['kategori' => $kategori]) }}" class="btn btn-sm btn-light">
+            <i class="bi bi-arrow-left"></i> Kembali
+        </a>
+    </div>
     <div class="card-body">
         <form action="{{ route('form-penilaian.store') }}" method="POST">
             @csrf
+            <input type="hidden" name="kategori" value="{{ $kategori }}">
             <div class="row g-3">
                 <div class="col-md-6">
                     <label for="pegawai_id" class="form-label">Pegawai <span class="text-danger">*</span></label>
@@ -83,7 +90,7 @@
 
             <div class="mt-4">
                 <button type="submit" class="btn btn-primary"><i class="bi bi-save"></i> Simpan</button>
-                <a href="{{ route('form-penilaian.index') }}" class="btn btn-secondary">Batal</a>
+                <a href="{{ route('form-penilaian.index', ['kategori' => $kategori]) }}" class="btn btn-secondary">Batal</a>
             </div>
         </form>
     </div>

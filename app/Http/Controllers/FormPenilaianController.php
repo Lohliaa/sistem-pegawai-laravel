@@ -146,8 +146,23 @@ class FormPenilaianController extends Controller
      */
     private function dataForm(?PenilaianKinerja $penilaian = null, string $kategori = 'pegawai'): array
     {
+        $kategoriLabels = [
+            'pegawai' => 'Pegawai',
+            'guru-alquran' => "Guru Al Qur'an",
+            'guru-non-alquran' => "Guru Non Al Qur'an",
+            'wali-kelas-reguler' => 'Wali Kelas Reguler',
+            'wali-kelas-icp' => 'Wali Kelas ICP',
+            'koordinator-jenjang' => 'Koordinator Jenjang',
+            'koordinator-alquran' => "Koordinator Al Qur'an",
+            'leader' => 'Leader',
+            'musyrifah' => 'Musyrif/ah',
+            'cs' => 'CS',
+        ];
+
         return [
             'penilaian' => $penilaian,
+            'kategori' => $kategori,
+            'kategoriNama' => $kategoriLabels[$kategori] ?? 'Pegawai',
             'pegawais' => Pegawai::orderBy('nama')->get(),
             'periodes' => PeriodePenilaian::ordered()->get(),
             'pejabats' => PejabatPenilai::orderBy('nama')->get(),
