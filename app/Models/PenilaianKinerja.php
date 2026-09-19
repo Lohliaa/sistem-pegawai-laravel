@@ -304,6 +304,16 @@ class PenilaianKinerja extends Model
             ->when(! empty($filters['pegawai_id']), fn(Builder $q) => $q->where($q->qualifyColumn('pegawai_id'), $filters['pegawai_id']))
             ->when(! empty($filters['periode_id']), fn(Builder $q) => $q->where($q->qualifyColumn('periode_id'), $filters['periode_id']))
             ->when(! empty($filters['pejabat_penilai_id']), fn(Builder $q) => $q->where($q->qualifyColumn('pejabat_penilai_id'), $filters['pejabat_penilai_id']))
-            ->when(! empty($filters['status']), fn(Builder $q) => $q->where($q->qualifyColumn('status'), $filters['status']));
+            ->when(! empty($filters['status']), fn(Builder $q) => $q->where($q->qualifyColumn('status'), $filters['status']))
+            ->when(! empty($filters['kategori']), function (Builder $q) use ($filters) {
+                if ($filters['kategori'] === 'pegawai') {
+                    $q->where(function ($subQ) {
+                        $subQ->where('kategori', 'pegawai')
+                             ->orWhereNull('kategori');
+                    });
+                } else {
+                    $q->where('kategori', $filters['kategori']);
+                }
+            });
     }
 }

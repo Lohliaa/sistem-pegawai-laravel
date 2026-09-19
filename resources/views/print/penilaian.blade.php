@@ -138,10 +138,18 @@
                 @endif
                 @endif
                 @endforeach
+                @php
+                    $totalJumlah = array_sum(array_filter(array_map(fn ($item) => (float) ($item['nilai'] ?? 0), $detailItems)));
+                @endphp
                 <tr class="table-light">
-                    <th class="text-end" colspan="2">Nilai Total / Rata-rata</th>
+                    <th class="text-end" colspan="2">Total Nilai</th>
+                    <th class="text-center">{{ $totalJumlah > 0 ? str_replace('.', ',', rtrim(rtrim(number_format($totalJumlah, 2, '.', ''), '0'), '.')) : '-' }}</th>
+                    <th></th>
+                </tr>
+                <tr class="table-light">
+                    <th class="text-end" colspan="2">Nilai Rata-rata</th>
                     <th class="text-center">{{ $penilaian->nilai_total !== null ? number_format((float) $penilaian->nilai_total, 2, ',', '.') : '-' }}</th>
-                    <th>Predikat: {{ $predikat['label'] ?? '-' }} ({{ $predikat['kode'] ?? '-' }})</th>
+                    <th></th>
                 </tr>
             </tbody>
         </table>

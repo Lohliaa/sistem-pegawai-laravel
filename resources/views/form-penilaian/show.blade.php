@@ -118,8 +118,16 @@
                         @endif
                     @endif
                 @endforeach
+                @php
+                    $totalJumlah = array_sum(array_filter(array_map(fn ($item) => (float) ($item['nilai'] ?? 0), $detailItems)));
+                @endphp
                 <tr class="table-active">
-                    <th class="text-end" colspan="4">Total (Jumlah &amp; Rata-rata): {{ $penilaian->nilai_total !== null ? number_format((float) $penilaian->nilai_total, 2, ',', '.') : '-' }}</th>
+                    <th class="text-end" colspan="4">
+                        Total Jumlah: <strong>{{ $totalJumlah > 0 ? str_replace('.', ',', rtrim(rtrim(number_format($totalJumlah, 2, '.', ''), '0'), '.')) : ($penilaian->nilai_total !== null ? number_format((float) $penilaian->nilai_total, 2, ',', '.') : '-') }}</strong>
+                        @if($penilaian->nilai_total !== null)
+                            &nbsp;|&nbsp; Rata-rata: <strong>{{ number_format((float) $penilaian->nilai_total, 2, ',', '.') }}</strong>
+                        @endif
+                    </th>
                 </tr>
             </tbody>
         </table>

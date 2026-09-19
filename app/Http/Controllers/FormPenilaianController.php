@@ -31,6 +31,8 @@ class FormPenilaianController extends Controller
 
         $kategoriNama = $kategoriLabels[$kategori] ?? 'Pegawai';
 
+        $filters['kategori'] = $kategori;
+
         $penilaians = PenilaianKinerja::with(['pegawai', 'periode', 'pejabatPenilai'])
             ->filter($filters)
             ->latest('id')
@@ -94,7 +96,7 @@ class FormPenilaianController extends Controller
     public function edit(Request $request, string $id)
     {
         $penilaian = PenilaianKinerja::findOrFail($id);
-        $kategori = $request->get('kategori', 'pegawai');
+        $kategori = $penilaian->kategori ?? $request->get('kategori', 'pegawai');
 
         return view('form-penilaian.edit', array_merge($this->dataForm($penilaian, $kategori), ['kategori' => $kategori]));
     }
@@ -102,7 +104,7 @@ class FormPenilaianController extends Controller
     public function update(Request $request, string $id)
     {
         $penilaian = PenilaianKinerja::findOrFail($id);
-        $kategori = $request->input('kategori', 'pegawai');
+        $kategori = $penilaian->kategori ?? $request->input('kategori', 'pegawai');
 
         $validated = $request->validate($this->rules($penilaian, $kategori), $this->messages($kategori), $this->attributes());
 
@@ -130,9 +132,10 @@ class FormPenilaianController extends Controller
     public function destroy(string $id)
     {
         $penilaian = PenilaianKinerja::findOrFail($id);
+        $kategori = $penilaian->kategori ?? 'pegawai';
         $penilaian->delete();
 
-        return redirect()->route('form-penilaian.index')
+        return redirect()->route('form-penilaian.index', ['kategori' => $kategori])
             ->with('success', 'Penilaian kinerja berhasil dihapus!');
     }
 
