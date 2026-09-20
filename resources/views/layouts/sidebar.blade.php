@@ -53,7 +53,7 @@
     @endif
 
     <!-- Penilaian Kinerja Menu (Admin, Kanit, Kabid) -->
-    @if(in_array(auth()->user()->role, ['admin', 'kanit', 'kabid']))
+    @if(in_array(auth()->user()->role, ['admin', 'kanit', 'kabid', 'staf']))
     @php
         $isPenilaianActive = request()->routeIs('kinerja-status.*') || 
                              request()->routeIs('kinerja-periode.*') || 
@@ -142,3 +142,4 @@
         </form>
     </div>
 </div>
+

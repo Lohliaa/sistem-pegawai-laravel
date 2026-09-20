@@ -72,7 +72,7 @@ Route::middleware('auth')->group(function () {
         Route::get('data-sk/export/excel', [DataSkController::class, 'export'])->name('data-sk.export');
     });
 
-    // Penilaian Kinerja Routes (Admin & Kanit/Kabid)
+    // Penilaian Kinerja Routes (Admin, Kanit, Kabid) - Full CRUD
     Route::middleware('role:admin,kanit,kabid')->group(function () {
         // Status Kepegawaian
         Route::resource('kinerja-status', KinerjaStatusController::class);
@@ -99,6 +99,21 @@ Route::middleware('auth')->group(function () {
         Route::get('laporan-penilaian', [LaporanPenilaianController::class, 'index'])->name('laporan-penilaian.index');
         Route::get('laporan-penilaian/detail/{id}', [LaporanPenilaianController::class, 'detail'])->name('laporan-penilaian.detail');
         Route::get('laporan-penilaian/export', [LaporanPenilaianController::class, 'export'])->name('laporan-penilaian.export');
+    });
+
+    // Penilaian Kinerja Read-Only Routes for Staf (Status, Periode, Pejabat, Bahan)
+    Route::middleware('role:staf')->group(function () {
+        Route::get('kinerja-status', [KinerjaStatusController::class, 'index'])->name('kinerja-status.index');
+        Route::get('kinerja-status/{kinerja_status}', [KinerjaStatusController::class, 'show'])->name('kinerja-status.show');
+        
+        Route::get('kinerja-periode', [KinerjaPeriodeController::class, 'index'])->name('kinerja-periode.index');
+        Route::get('kinerja-periode/{kinerja_periode}', [KinerjaPeriodeController::class, 'show'])->name('kinerja-periode.show');
+        
+        Route::get('kinerja-pejabat', [KinerjaPejabatController::class, 'index'])->name('kinerja-pejabat.index');
+        Route::get('kinerja-pejabat/{kinerja_pejabat}', [KinerjaPejabatController::class, 'show'])->name('kinerja-pejabat.show');
+        
+        Route::get('kinerja-bahan', [KinerjaBahanController::class, 'index'])->name('kinerja-bahan.index');
+        Route::get('kinerja-bahan/{kinerja_bahan}', [KinerjaBahanController::class, 'show'])->name('kinerja-bahan.show');
     });
 });
 

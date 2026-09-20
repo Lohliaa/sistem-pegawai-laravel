@@ -8,9 +8,11 @@
         <h3 class="mb-0"><i class="bi bi-person-check"></i> Status Kepegawaian</h3>
         <small class="text-muted">Daftar status kepegawaian (contoh: PT, PKWTT, PKWT).</small>
     </div>
+    @if(auth()->user()->role !== 'staf')
     <a href="{{ route('kinerja-status.create') }}" class="btn btn-primary">
         <i class="bi bi-plus-circle"></i> Tambah Status
     </a>
+    @endif
 </div>
 <hr>
 
@@ -24,7 +26,7 @@
                     <th width="60">No</th>
                     <th>Nama Status</th>
                     <th width="180">Dibuat</th>
-                    <th width="200">Aksi</th>
+                    <th width="{{ auth()->user()->role !== 'staf' ? '200' : '80' }}">Aksi</th>
                 </tr>
             </thead>
             <tbody>
@@ -37,6 +39,7 @@
                         <a href="{{ route('kinerja-status.show', $status->id) }}" class="btn btn-sm btn-info">
                             <i class="bi bi-eye"></i>
                         </a>
+                        @if(auth()->user()->role !== 'staf')
                         <a href="{{ route('kinerja-status.edit', $status->id) }}" class="btn btn-sm btn-warning">
                             <i class="bi bi-pencil"></i>
                         </a>
@@ -47,6 +50,7 @@
                                 <i class="bi bi-trash"></i>
                             </button>
                         </form>
+                        @endif
                     </td>
                 </tr>
                 @empty
