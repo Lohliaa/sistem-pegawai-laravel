@@ -77,6 +77,7 @@
                         <a href="{{ route('print.penilaian', $penilaian->id) }}" target="_blank" class="btn btn-sm btn-success" title="Print">
                             <i class="bi bi-printer"></i>
                         </a>
+                        @if(auth()->user()->role !== 'staf' || auth()->user()->id === $penilaian->pegawai?->user_id)
                         <a href="{{ route('form-penilaian.edit', $penilaian->id) }}" class="btn btn-sm btn-warning" title="Edit">
                             <i class="bi bi-pencil"></i>
                         </a>
@@ -88,6 +89,7 @@
                                 <i class="bi bi-trash"></i>
                             </button>
                         </form>
+                        @endif
                     </td>
                 </tr>
                 @empty

@@ -8,9 +8,11 @@
         <h3 class="mb-0"><i class="bi bi-file-earmark-text"></i> Manajemen Bahan Penilaian</h3>
         <small class="text-muted">Bahan pendukung penilaian kinerja pegawai.</small>
     </div>
+    @if(auth()->user()->role !== 'staf')
     <a href="{{ route('kinerja-bahan.create') }}" class="btn btn-primary">
         <i class="bi bi-plus-circle"></i> Tambah Bahan
     </a>
+    @endif
 </div>
 <hr>
 
@@ -38,20 +40,22 @@
                     </td>
                     <td>{{ $bahan->keterangan ?: '-' }}</td>
                     <td>
-                        <a href="{{ route('kinerja-bahan.show', $bahan->id) }}" class="btn btn-sm btn-info">
+                        <a href="{{ route('kinerja-bahan.show', $bahan->id) }}" class="btn btn-sm btn-info" title="Detail">
                             <i class="bi bi-eye"></i>
                         </a>
-                        <a href="{{ route('kinerja-bahan.edit', $bahan->id) }}" class="btn btn-sm btn-warning">
+                        @if(auth()->user()->role !== 'staf')
+                        <a href="{{ route('kinerja-bahan.edit', $bahan->id) }}" class="btn btn-sm btn-warning" title="Edit">
                             <i class="bi bi-pencil"></i>
                         </a>
                         <form action="{{ route('kinerja-bahan.destroy', $bahan->id) }}" method="POST" class="d-inline">
                             @csrf
                             @method('DELETE')
-                            <button type="submit" class="btn btn-sm btn-danger"
+                            <button type="submit" class="btn btn-sm btn-danger" title="Hapus"
                                     onclick="return confirm('Hapus bahan {{ $bahan->nama_bahan }}?')">
                                 <i class="bi bi-trash"></i>
                             </button>
                         </form>
+                        @endif
                     </td>
                 </tr>
                 @empty

@@ -8,9 +8,11 @@
         <h3 class="mb-0"><i class="bi bi-award"></i> Manajemen Pejabat Penilai</h3>
         <small class="text-muted">Pegawai yang bertanggung jawab menilai kinerja pegawai lain.</small>
     </div>
+    @if(auth()->user()->role !== 'staf')
     <a href="{{ route('kinerja-pejabat.create') }}" class="btn btn-primary">
         <i class="bi bi-plus-circle"></i> Tambah Pejabat
     </a>
+    @endif
 </div>
 <hr>
 
@@ -48,20 +50,22 @@
                     <td>{{ $pejabat->keterangan ?: '-' }}</td>
                     <td>{{ $pejabat->penilaian_count }}</td>
                     <td>
-                        <a href="{{ route('kinerja-pejabat.show', $pejabat->id) }}" class="btn btn-sm btn-info">
+                        <a href="{{ route('kinerja-pejabat.show', $pejabat->id) }}" class="btn btn-sm btn-info" title="Detail">
                             <i class="bi bi-eye"></i>
                         </a>
-                        <a href="{{ route('kinerja-pejabat.edit', $pejabat->id) }}" class="btn btn-sm btn-warning">
+                        @if(auth()->user()->role !== 'staf')
+                        <a href="{{ route('kinerja-pejabat.edit', $pejabat->id) }}" class="btn btn-sm btn-warning" title="Edit">
                             <i class="bi bi-pencil"></i>
                         </a>
                         <form action="{{ route('kinerja-pejabat.destroy', $pejabat->id) }}" method="POST" class="d-inline">
                             @csrf
                             @method('DELETE')
-                            <button type="submit" class="btn btn-sm btn-danger"
+                            <button type="submit" class="btn btn-sm btn-danger" title="Hapus"
                                     onclick="return confirm('Hapus pejabat {{ $pejabat->nama }}?')">
                                 <i class="bi bi-trash"></i>
                             </button>
                         </form>
+                        @endif
                     </td>
                 </tr>
                 @empty

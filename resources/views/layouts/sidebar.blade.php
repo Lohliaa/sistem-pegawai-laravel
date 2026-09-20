@@ -123,9 +123,11 @@
                     </a>
                 </div>
             </div>
+            @if(auth()->user()->role !== 'staf')
             <a href="{{ route('laporan-penilaian.index') }}" class="{{ request()->routeIs('laporan-penilaian.*') ? 'active' : '' }}" style="font-size: 0.9rem; padding: 8px 12px;">
                 <i class="bi bi-bar-chart"></i> Laporan
             </a>
+            @endif
         </div>
     </div>
     @endif

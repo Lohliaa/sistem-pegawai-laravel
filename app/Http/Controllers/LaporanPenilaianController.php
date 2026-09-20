@@ -92,4 +92,20 @@ class LaporanPenilaianController extends Controller
 
         return ExcelHelper::download($spreadsheet, 'laporan_penilaian_'.date('Y-m-d_His').'.xlsx');
     }
+
+    /**
+     * Cetak semua laporan penilaian berdasarkan filter.
+     */
+    public function cetakSemua(Request $request)
+    {
+        $laporans = PenilaianKinerja::with(['pegawai', 'periode', 'pejabatPenilai', 'statusKepegawaian'])
+            ->filter($request->only(['pegawai_id', 'periode_id', 'pejabat_penilai_id']))
+            ->join('pegawai', 'pegawai.id', '=', 'penilaian_kinerja.pegawai_id')
+            ->orderBy('pegawai.nama')
+            ->orderByDesc('penilaian_kinerja.id')
+            ->select('penilaian_kinerja.*')
+            ->get();
+
+        return view('laporan-penilaian.print-semua', compact('laporans'));
+    }
 }

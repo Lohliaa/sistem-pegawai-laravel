@@ -87,6 +87,10 @@ class FormPenilaianController extends Controller
     {
         $penilaian = PenilaianKinerja::with(['pegawai', 'periode', 'pejabatPenilai', 'statusKepegawaian'])->findOrFail($id);
 
+        if (auth()->user()->role === 'staf' && $penilaian->pegawai?->user_id !== auth()->id()) {
+            abort(403, 'Unauthorized access.');
+        }
+
         return view('form-penilaian.show', [
             'penilaian' => $penilaian,
             'aspek' => PenilaianKinerja::ASPEK,
@@ -96,6 +100,11 @@ class FormPenilaianController extends Controller
     public function edit(Request $request, string $id)
     {
         $penilaian = PenilaianKinerja::findOrFail($id);
+        
+        if (auth()->user()->role === 'staf' && $penilaian->pegawai?->user_id !== auth()->id()) {
+            abort(403, 'Unauthorized access.');
+        }
+
         $kategori = $penilaian->kategori ?? $request->get('kategori', 'pegawai');
 
         return view('form-penilaian.edit', array_merge($this->dataForm($penilaian, $kategori), ['kategori' => $kategori]));
@@ -104,6 +113,11 @@ class FormPenilaianController extends Controller
     public function update(Request $request, string $id)
     {
         $penilaian = PenilaianKinerja::findOrFail($id);
+        
+        if (auth()->user()->role === 'staf' && $penilaian->pegawai?->user_id !== auth()->id()) {
+            abort(403, 'Unauthorized access.');
+        }
+
         $kategori = $penilaian->kategori ?? $request->input('kategori', 'pegawai');
 
         $validated = $request->validate($this->rules($penilaian, $kategori), $this->messages($kategori), $this->attributes());
@@ -132,6 +146,11 @@ class FormPenilaianController extends Controller
     public function destroy(string $id)
     {
         $penilaian = PenilaianKinerja::findOrFail($id);
+        
+        if (auth()->user()->role === 'staf' && $penilaian->pegawai?->user_id !== auth()->id()) {
+            abort(403, 'Unauthorized access.');
+        }
+
         $kategori = $penilaian->kategori ?? 'pegawai';
         $penilaian->delete();
 

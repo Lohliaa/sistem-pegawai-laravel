@@ -379,6 +379,11 @@ class PenilaianKinerja extends Model
                 } else {
                     $q->where('kategori', $filters['kategori']);
                 }
+            })
+            ->when(auth()->check() && auth()->user()->role === 'staf', function (Builder $q) {
+                $q->whereHas('pegawai', function ($pegawaiQ) {
+                    $pegawaiQ->where('user_id', auth()->id());
+                });
             });
     }
 }

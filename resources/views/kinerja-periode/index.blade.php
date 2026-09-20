@@ -8,9 +8,11 @@
         <h3 class="mb-0"><i class="bi bi-calendar3"></i> Periode Penilaian</h3>
         <small class="text-muted">Periode kuartal penilaian kinerja pegawai.</small>
     </div>
+    @if(auth()->user()->role !== 'staf')
     <a href="{{ route('kinerja-periode.create') }}" class="btn btn-primary">
         <i class="bi bi-plus-circle"></i> Tambah Periode
     </a>
+    @endif
 </div>
 <hr>
 
@@ -38,20 +40,22 @@
                     <td>{{ $periode->tahun }}</td>
                     <td>{{ $periode->penilaian_count }}</td>
                     <td>
-                        <a href="{{ route('kinerja-periode.show', $periode->id) }}" class="btn btn-sm btn-info">
+                        <a href="{{ route('kinerja-periode.show', $periode->id) }}" class="btn btn-sm btn-info" title="Detail">
                             <i class="bi bi-eye"></i>
                         </a>
-                        <a href="{{ route('kinerja-periode.edit', $periode->id) }}" class="btn btn-sm btn-warning">
+                        @if(auth()->user()->role !== 'staf')
+                        <a href="{{ route('kinerja-periode.edit', $periode->id) }}" class="btn btn-sm btn-warning" title="Edit">
                             <i class="bi bi-pencil"></i>
                         </a>
                         <form action="{{ route('kinerja-periode.destroy', $periode->id) }}" method="POST" class="d-inline">
                             @csrf
                             @method('DELETE')
-                            <button type="submit" class="btn btn-sm btn-danger"
+                            <button type="submit" class="btn btn-sm btn-danger" title="Hapus"
                                     onclick="return confirm('Hapus periode {{ $periode->label }}?')">
                                 <i class="bi bi-trash"></i>
                             </button>
                         </form>
+                        @endif
                     </td>
                 </tr>
                 @empty

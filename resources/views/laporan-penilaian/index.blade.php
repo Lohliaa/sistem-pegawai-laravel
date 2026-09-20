@@ -3,16 +3,6 @@
 @section('title', 'Laporan Penilaian')
 
 @section('content')
-<div class="d-flex justify-content-between align-items-center mb-3">
-    <div>
-        <h3 class="mb-0"><i class="bi bi-bar-chart"></i> Laporan Penilaian Kinerja</h3>
-        <small class="text-muted">Daftar laporan penilaian kinerja pegawai.</small>
-    </div>
-    <a href="{{ route('laporan-penilaian.export') }}" class="btn btn-success">
-        <i class="bi bi-download"></i> Export Excel
-    </a>
-</div>
-<hr>
 
 @include('partials.errors')
 
@@ -48,7 +38,9 @@
             </div>
             <div class="col-auto">
                 <button type="submit" class="btn btn-primary"><i class="bi bi-search"></i> Terapkan</button>
-                <a href="{{ route('laporan-penilaian.index') }}" class="btn btn-outline-secondary">Reset</a>
+                <a href="{{ route('laporan-penilaian.cetak-semua', request()->query()) }}" target="_blank" class="btn btn-warning">
+                    <i class="bi bi-printer"></i> Print Semua
+                </a>
             </div>
         </form>
     </div>

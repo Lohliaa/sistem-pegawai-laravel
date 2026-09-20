@@ -6,7 +6,7 @@
 <div class="d-flex justify-content-between align-items-center mb-3">
     <div>
         <h3 class="mb-0"><i class="bi bi-person-check"></i> Status Kepegawaian</h3>
-        <small class="text-muted">Daftar status kepegawaian (contoh: PT, PKWTT, PKWT).</small>
+        <small class="text-muted">Daftar status kepegawaian (contoh: Magang, Honorer, PT, GT, dan lain-lain).</small>
     </div>
     @if(auth()->user()->role !== 'staf')
     <a href="{{ route('kinerja-status.create') }}" class="btn btn-primary">
