@@ -216,6 +216,12 @@
                                 <span class="text-muted">Tidak ada file</span>
                             @endif
                         </td>
+                    </tr>
+                    @endforeach
+                </table>
+            </div>
+        </div>
+
         <!-- Data Tambahan -->
         <div class="card mb-4">
             <div class="card-header bg-secondary text-white">
@@ -251,8 +257,7 @@
             </div>
         </div>
 
-        <!-- Riwayat Penilaian Kinerja -->
-        @if($pegawai->penilaian->isNotEmpty())
+                @if($pegawai->penilaian->isNotEmpty())
         <div class="card mb-4">
             <div class="card-header bg-dark text-white">
                 <strong><i class="bi bi-clipboard-check"></i> Penilaian Kinerja ({{ $pegawai->penilaian->count() }})</strong>
@@ -269,14 +274,14 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach($pegawai->penilaian as $index => $penilaian)
+                        @foreach($pegawai->penilaian as $index => $item)
                         <tr>
                             <td>{{ $index + 1 }}</td>
-                            <td>{{ $penilaian->periode?->label ?? '-' }}</td>
-                            <td>{{ $penilaian->pejabatPenilai?->nama ?: '-' }}</td>
-                            <td>{{ $penilaian->nilai_total !== null ? number_format((float) $penilaian->nilai_total, 2, ',', '.') : '-' }}</td>
+                            <td>{{ $item->periode?->label ?? '-' }}</td>
+                            <td>{{ $item->pejabatPenilai?->nama ?: '-' }}</td>
+                            <td>{{ $item->nilai_total !== null ? number_format((float) $item->nilai_total, 2, ',', '.') : '-' }}</td>
                             <td>
-                                <a href="{{ route('form-penilaian.show', $penilaian->id) }}" class="btn btn-sm btn-info">
+                                <a href="{{ route('form-penilaian.show', $item->id) }}" class="btn btn-sm btn-info">
                                     <i class="bi bi-eye"></i>
                                 </a>
                             </td>
@@ -288,26 +293,6 @@
         </div>
         @endif
 
-                    </tr>
-                    @endforeach
-                </table>
-            </div>
-        </div>
-
-                    </tr>
-                    <tr>
-                        <th class="ps-3">Masa Kerja</th>
-                        <td>{{ $pegawai->masa_kerja ?? '-' }}</td>
-                    </tr>
-                    <tr>
-                        <th class="ps-3">Status Aktif</th>
-                        <td><span class="badge {{ $pegawai->status_aktif === 'Aktif' ? 'bg-success' : 'bg-danger' }}">{{ $pegawai->status_aktif ?? 'Aktif' }}</span></td>
-                    </tr>
-                </table>
-            </div>
-        </div>
-
-        </div>
     </div>
 </div>
 @endsection
