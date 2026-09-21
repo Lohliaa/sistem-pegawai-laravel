@@ -38,7 +38,16 @@
             </div>
             <div class="col-auto">
                 <button type="submit" class="btn btn-primary"><i class="bi bi-search"></i> Terapkan</button>
-                <a href="{{ route('laporan-penilaian.cetak-semua', request()->query()) }}" target="_blank" class="btn btn-warning">
+                <a href="{{ route('laporan-penilaian.cetak-semua', request()->query()) }}" target="_blank" class="btn btn-warning" 
+                   @if(auth()->check() && (auth()->user()->role === 'kanit' || auth()->user()->role === 'kabid'))
+                       @php
+                           $userPejabat = \App\Models\PejabatPenilai::where('pegawai_id', auth()->user()->pegawai_id)->first();
+                       @endphp
+                       @if(!$userPejabat)
+                           style="pointer-events: none; opacity: 0.5;"
+                       @endif
+                   @endif
+                >
                     <i class="bi bi-printer"></i> Print Semua
                 </a>
             </div>

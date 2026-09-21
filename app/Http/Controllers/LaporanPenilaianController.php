@@ -123,12 +123,14 @@ class LaporanPenilaianController extends Controller
         $query = PenilaianKinerja::with(['pegawai', 'periode', 'pejabatPenilai', 'statusKepegawaian'])
             ->filter($request->only(['pegawai_id', 'periode_id', 'pejabat_penilai_id']));
 
-        // Tambahkan pembatasan akses untuk Pejabat Penilai
+        // Pembatasan akses untuk Pejabat Penilai: hanya bisa mencetak laporan dari pejabat penilai yang bersangkutan
         if (auth()->check() && (auth()->user()->role === 'kanit' || auth()->user()->role === 'kabid')) {
             $pegawai = auth()->user()->pegawai;
-            $pejabat = PejabatPenilai::where('pegawai_id', $pegawai->id)->first();
+            $pejabat = PejabatPenilai::where('pegawai_id', $pegawai?->id)->first();
             if ($pejabat) {
                 $query->where('pejabat_penilai_id', $pejabat->id);
+            } else {
+                $query->whereRaw('1 = 0');
             }
         }
 
