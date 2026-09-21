@@ -110,8 +110,8 @@
                             <input type="text" name="jabatan" id="jabatan" class="form-control" value="{{ old('jabatan') }}">
                         </div>
                         <div class="col-md-6">
-                            <label for="jenis_tenaga" class="form-label">Jenis Tenaga</label>
-                            <input type="text" name="jenis_tenaga" id="jenis_tenaga" class="form-control" value="{{ old('jenis_tenaga') }}">
+                            <label for="nama_bidang" class="form-label">Nama Bidang <small class="text-muted">(khusus unit yayasan)</small></label>
+                            <input type="text" name="nama_bidang" id="nama_bidang" class="form-control" value="{{ old('nama_bidang') }}">
                         </div>
                         <div class="col-md-6">
                             <label for="status_kepegawaian_id" class="form-label">Status Kepegawaian</label>

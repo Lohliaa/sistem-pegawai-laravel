@@ -101,10 +101,7 @@
                         <i class="bi bi-journal-text"></i> Guru Non Al Qur'an
                     </a>
                     <a href="{{ route('form-penilaian.index', ['kategori' => 'wali-kelas-reguler']) }}" class="{{ request('kategori') == 'wali-kelas-reguler' ? 'active' : '' }}" style="font-size: 0.85rem; padding: 6px 10px;">
-                        <i class="bi bi-people"></i> Wali Kelas Reguler
-                    </a>
-                    <a href="{{ route('form-penilaian.index', ['kategori' => 'wali-kelas-icp']) }}" class="{{ request('kategori') == 'wali-kelas-icp' ? 'active' : '' }}" style="font-size: 0.85rem; padding: 6px 10px;">
-                        <i class="bi bi-people-fill"></i> Wali Kelas ICP
+                        <i class="bi bi-people"></i> Wali Kelas
                     </a>
                     <a href="{{ route('form-penilaian.index', ['kategori' => 'koordinator-jenjang']) }}" class="{{ request('kategori') == 'koordinator-jenjang' ? 'active' : '' }}" style="font-size: 0.85rem; padding: 6px 10px;">
                         <i class="bi bi-diagram-3"></i> Koordinator Jenjang

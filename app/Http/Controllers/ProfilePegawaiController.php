@@ -143,7 +143,7 @@ class ProfilePegawaiController extends Controller
             'email' => 'nullable|email|max:255',
             'unit' => 'nullable|string|max:255',
             'jabatan' => 'nullable|string|max:255',
-            'jenis_tenaga' => 'nullable|string|max:100',
+            'nama_bidang' => 'nullable|string|max:100',
             'status_kepegawaian_id' => 'nullable|exists:status_kepegawaian,id',
             'tanggal_tmt' => 'nullable|date',
             'golongan_ruang' => 'nullable|string|max:50',

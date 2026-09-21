@@ -124,8 +124,8 @@
                         <td>{{ $pegawai->jabatan ?? '-' }}</td>
                     </tr>
                     <tr>
-                        <th class="ps-3">Jenis Tenaga</th>
-                        <td>{{ $pegawai->jenis_tenaga ?? '-' }}</td>
+                        <th class="ps-3">Nama Bidang</th>
+                        <td>{{ $pegawai->nama_bidang ?? '-' }}</td>
                     </tr>
                     <tr>
                         <th class="ps-3">Status Kepegawaian</th>

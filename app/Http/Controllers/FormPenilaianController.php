@@ -20,8 +20,7 @@ class FormPenilaianController extends Controller
             'pegawai' => 'Pegawai',
             'guru-alquran' => "Guru Al Qur'an",
             'guru-non-alquran' => "Guru Non Al Qur'an",
-            'wali-kelas-reguler' => 'Wali Kelas Reguler',
-            'wali-kelas-icp' => 'Wali Kelas ICP',
+            'wali-kelas-reguler' => 'Wali Kelas',
             'koordinator-jenjang' => 'Koordinator Jenjang',
             'koordinator-alquran' => "Koordinator Al Qur'an",
             'leader' => 'Leader',
@@ -52,12 +51,20 @@ class FormPenilaianController extends Controller
 
     public function create(Request $request)
     {
+        if (auth()->user()->role === 'staf') {
+            abort(403, 'Unauthorized access.');
+        }
+
         $kategori = $request->get('kategori', 'pegawai');
         return view('form-penilaian.create', array_merge($this->dataForm(null, $kategori), ['kategori' => $kategori]));
     }
 
     public function store(Request $request)
     {
+        if (auth()->user()->role === 'staf') {
+            abort(403, 'Unauthorized access.');
+        }
+
         $kategori = $request->input('kategori', 'pegawai');
         $validated = $request->validate($this->rules(null, $kategori), $this->messages($kategori), $this->attributes());
 
@@ -99,12 +106,11 @@ class FormPenilaianController extends Controller
 
     public function edit(Request $request, string $id)
     {
-        $penilaian = PenilaianKinerja::findOrFail($id);
-        
-        if (auth()->user()->role === 'staf' && $penilaian->pegawai?->user_id !== auth()->id()) {
+        if (auth()->user()->role === 'staf') {
             abort(403, 'Unauthorized access.');
         }
 
+        $penilaian = PenilaianKinerja::findOrFail($id);
         $kategori = $penilaian->kategori ?? $request->get('kategori', 'pegawai');
 
         return view('form-penilaian.edit', array_merge($this->dataForm($penilaian, $kategori), ['kategori' => $kategori]));
@@ -112,12 +118,11 @@ class FormPenilaianController extends Controller
 
     public function update(Request $request, string $id)
     {
-        $penilaian = PenilaianKinerja::findOrFail($id);
-        
-        if (auth()->user()->role === 'staf' && $penilaian->pegawai?->user_id !== auth()->id()) {
+        if (auth()->user()->role === 'staf') {
             abort(403, 'Unauthorized access.');
         }
 
+        $penilaian = PenilaianKinerja::findOrFail($id);
         $kategori = $penilaian->kategori ?? $request->input('kategori', 'pegawai');
 
         $validated = $request->validate($this->rules($penilaian, $kategori), $this->messages($kategori), $this->attributes());
@@ -145,11 +150,11 @@ class FormPenilaianController extends Controller
 
     public function destroy(string $id)
     {
-        $penilaian = PenilaianKinerja::findOrFail($id);
-        
-        if (auth()->user()->role === 'staf' && $penilaian->pegawai?->user_id !== auth()->id()) {
+        if (auth()->user()->role === 'staf') {
             abort(403, 'Unauthorized access.');
         }
+
+        $penilaian = PenilaianKinerja::findOrFail($id);
 
         $kategori = $penilaian->kategori ?? 'pegawai';
         $penilaian->delete();
