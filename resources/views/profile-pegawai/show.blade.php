@@ -124,7 +124,7 @@
                         <td>{{ $pegawai->jabatan ?? '-' }}</td>
                     </tr>
                     <tr>
-                        <th class="ps-3">Nama Bidang</th>
+                        <th class="ps-3">Nama Bidang <small class="text-muted">(khusus unit yayasan)</small></th>
                         <td>{{ $pegawai->nama_bidang ?? '-' }}</td>
                     </tr>
                     <tr>

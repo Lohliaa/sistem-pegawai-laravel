@@ -13,9 +13,9 @@
             <div class="row">
                 <div class="col-md-3 text-center mb-3">
                     @if($identity->foto)
-                        <img src="{{ asset('storage/'.$identity->foto) }}" alt="Foto" class="img-thumbnail rounded-circle mb-2" style="width: 120px; height: 120px; object-fit: cover;">
+                        <img src="{{ asset('storage/'.$identity->foto) }}" alt="Foto" class="img-thumbnail mb-2" style="max-width: 150px; max-height: 180px; object-fit: contain;">
                     @else
-                        <div class="bg-secondary text-white rounded-circle d-flex align-items-center justify-content-center mx-auto mb-2" style="width: 120px; height: 120px; font-size: 3rem;">
+                        <div class="bg-secondary text-white d-flex align-items-center justify-content-center mx-auto mb-2" style="width: 120px; height: 120px; font-size: 3rem;">
                             {{ strtoupper(substr($identity->nama, 0, 1)) }}
                         </div>
                     @endif
