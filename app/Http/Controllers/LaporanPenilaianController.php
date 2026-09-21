@@ -15,8 +15,19 @@ class LaporanPenilaianController extends Controller
     {
         $filters = $request->only(['pegawai_id', 'periode_id', 'pejabat_penilai_id']);
 
-        $laporans = PenilaianKinerja::with(['pegawai', 'periode', 'pejabatPenilai'])
-            ->filter($filters)
+        $query = PenilaianKinerja::with(['pegawai', 'periode', 'pejabatPenilai'])
+            ->filter($filters);
+
+        // Tambahkan pembatasan akses untuk Pejabat Penilai
+        if (auth()->check() && auth()->user()->role === 'kanit' || auth()->user()->role === 'kabid') {
+            $pegawai = auth()->user()->pegawai;
+            $pejabat = PejabatPenilai::where('pegawai_id', $pegawai->id)->first();
+            if ($pejabat) {
+                $query->where('pejabat_penilai_id', $pejabat->id);
+            }
+        }
+
+        $laporans = $query
             ->join('pegawai', 'pegawai.id', '=', 'penilaian_kinerja.pegawai_id')
             ->orderBy('pegawai.nama')
             ->orderByDesc('penilaian_kinerja.id')
@@ -49,8 +60,19 @@ class LaporanPenilaianController extends Controller
      */
     public function export(Request $request)
     {
-        $laporans = PenilaianKinerja::with(['pegawai', 'periode', 'pejabatPenilai'])
-            ->filter($request->only(['pegawai_id', 'periode_id', 'pejabat_penilai_id']))
+        $query = PenilaianKinerja::with(['pegawai', 'periode', 'pejabatPenilai'])
+            ->filter($request->only(['pegawai_id', 'periode_id', 'pejabat_penilai_id']));
+
+        // Tambahkan pembatasan akses untuk Pejabat Penilai
+        if (auth()->check() && (auth()->user()->role === 'kanit' || auth()->user()->role === 'kabid')) {
+            $pegawai = auth()->user()->pegawai;
+            $pejabat = PejabatPenilai::where('pegawai_id', $pegawai->id)->first();
+            if ($pejabat) {
+                $query->where('pejabat_penilai_id', $pejabat->id);
+            }
+        }
+
+        $laporans = $query
             ->join('pegawai', 'pegawai.id', '=', 'penilaian_kinerja.pegawai_id')
             ->orderBy('pegawai.nama')
             ->orderByDesc('penilaian_kinerja.id')
@@ -98,8 +120,19 @@ class LaporanPenilaianController extends Controller
      */
     public function cetakSemua(Request $request)
     {
-        $laporans = PenilaianKinerja::with(['pegawai', 'periode', 'pejabatPenilai', 'statusKepegawaian'])
-            ->filter($request->only(['pegawai_id', 'periode_id', 'pejabat_penilai_id']))
+        $query = PenilaianKinerja::with(['pegawai', 'periode', 'pejabatPenilai', 'statusKepegawaian'])
+            ->filter($request->only(['pegawai_id', 'periode_id', 'pejabat_penilai_id']));
+
+        // Tambahkan pembatasan akses untuk Pejabat Penilai
+        if (auth()->check() && (auth()->user()->role === 'kanit' || auth()->user()->role === 'kabid')) {
+            $pegawai = auth()->user()->pegawai;
+            $pejabat = PejabatPenilai::where('pegawai_id', $pegawai->id)->first();
+            if ($pejabat) {
+                $query->where('pejabat_penilai_id', $pejabat->id);
+            }
+        }
+
+        $laporans = $query
             ->join('pegawai', 'pegawai.id', '=', 'penilaian_kinerja.pegawai_id')
             ->orderBy('pegawai.nama')
             ->orderByDesc('penilaian_kinerja.id')

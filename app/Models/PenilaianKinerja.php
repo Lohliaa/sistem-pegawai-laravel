@@ -384,6 +384,10 @@ class PenilaianKinerja extends Model
                 $q->whereHas('pegawai', function ($pegawaiQ) {
                     $pegawaiQ->where('user_id', auth()->id());
                 });
+            })
+            ->when(auth()->check() && auth()->user()->role !== 'admin' && PejabatPenilai::where('pegawai_id', auth()->user()->pegawai_id)->exists(), function (Builder $q) {
+                $pejabat = PejabatPenilai::where('pegawai_id', auth()->user()->pegawai_id)->first();
+                $q->where($q->qualifyColumn('pejabat_penilai_id'), $pejabat->id);
             });
     }
 }

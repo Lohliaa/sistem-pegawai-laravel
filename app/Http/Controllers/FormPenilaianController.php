@@ -33,8 +33,18 @@ class FormPenilaianController extends Controller
         $filters['kategori'] = $kategori;
 
         $penilaians = PenilaianKinerja::with(['pegawai', 'periode', 'pejabatPenilai'])
-            ->filter($filters)
-            ->latest('id')
+            ->filter($filters);
+
+        // Pembatasan akses untuk Pejabat Penilai (Kanit / Kabid) pada semua kategori form penilaian
+        if (auth()->check() && (auth()->user()->role === 'kanit' || auth()->user()->role === 'kabid')) {
+            $pegawai = auth()->user()->pegawai;
+            $pejabat = PejabatPenilai::where('pegawai_id', $pegawai?->id)->first();
+            if ($pejabat) {
+                $penilaians->where('pejabat_penilai_id', $pejabat->id);
+            }
+        }
+
+        $penilaians = $penilaians->latest('id')
             ->paginate(10)
             ->withQueryString();
 
