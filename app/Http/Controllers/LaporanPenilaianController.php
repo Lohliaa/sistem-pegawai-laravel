@@ -19,11 +19,13 @@ class LaporanPenilaianController extends Controller
             ->filter($filters);
 
         // Tambahkan pembatasan akses untuk Pejabat Penilai
-        if (auth()->check() && auth()->user()->role === 'kanit' || auth()->user()->role === 'kabid') {
+        if (auth()->check() && (auth()->user()->role === 'kanit' || auth()->user()->role === 'kabid')) {
             $pegawai = auth()->user()->pegawai;
-            $pejabat = PejabatPenilai::where('pegawai_id', $pegawai->id)->first();
+            $pejabat = PejabatPenilai::where('pegawai_id', $pegawai?->id)->first();
             if ($pejabat) {
                 $query->where('pejabat_penilai_id', $pejabat->id);
+            } else {
+                $query->whereRaw('1 = 0');
             }
         }
 
@@ -66,9 +68,11 @@ class LaporanPenilaianController extends Controller
         // Tambahkan pembatasan akses untuk Pejabat Penilai
         if (auth()->check() && (auth()->user()->role === 'kanit' || auth()->user()->role === 'kabid')) {
             $pegawai = auth()->user()->pegawai;
-            $pejabat = PejabatPenilai::where('pegawai_id', $pegawai->id)->first();
+            $pejabat = PejabatPenilai::where('pegawai_id', $pegawai?->id)->first();
             if ($pejabat) {
                 $query->where('pejabat_penilai_id', $pejabat->id);
+            } else {
+                $query->whereRaw('1 = 0');
             }
         }
 
