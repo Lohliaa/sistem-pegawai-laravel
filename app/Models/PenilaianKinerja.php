@@ -193,6 +193,47 @@ class PenilaianKinerja extends Model
             ['type' => 'item', 'key' => 'kerja_harian', 'uraian' => 'Capaian Kerja Harian'],
         ],
 
+        'koordinator-alquran' => [
+            ['type' => 'section', 'label' => 'I. KOMPETENSI (25%)'],
+            ['type' => 'item', 'key' => 'hasil_supervisi_manajerial', 'uraian' => '1. Hasil Supervisi Manajerial'],
+            ['type' => 'item', 'key' => 'hasil_ukg', 'uraian' => '2. Hasil UKG/Uji Kompetensi'],
+
+            ['type' => 'section', 'label' => 'II. KOMITMEN (35%)'],
+
+            ['type' => 'sub', 'label' => 'A. KEDISIPLINANAN'],
+            ['type' => 'item', 'key' => 'kehadiran_sekolah', 'uraian' => '1. Kehadiran di Sekolah'],
+            ['type' => 'item', 'key' => 'hadir_tepat_waktu', 'uraian' => '2. Hadir Tepat Waktu'],
+
+            ['type' => 'sub', 'label' => 'B. KEISLAMAN'],
+            ['type' => 'item', 'key' => 'shalat_awal_waktu', 'uraian' => '1. Shalat Awal Waktu (bagi ustadzah) /Berjamaah (bagi ustadz)'],
+            ['type' => 'item', 'key' => 'tilawah_harian', 'uraian' => '2. Tilawah minimal 1/2 juz per hari'],
+            ['type' => 'item', 'key' => 'hafalan_5_juz', 'uraian' => '3. Hafalan minimal 5 juz'],
+            ['type' => 'item', 'key' => 'bpi_kehadiran', 'uraian' => '4. Kehadiran Pembinaan Keislaman (BPI)', 'sub' => [
+                ['uraian' => 'a. Selalu hadir'],
+                ['uraian' => 'b. Mengikuti seluruh rangkaian (baramij) BPI'],
+                ['uraian' => 'c. Berpartisipasi aktif (diskusi, dsb)'],
+                ['uraian' => 'd. Mengikuti kegiatan pendukung BPI (JI/Mukhoyyam, dsb)'],
+            ]],
+
+            ['type' => 'sub', 'label' => 'C. PENGEMBANGAN DIRI'],
+            ['type' => 'item', 'key' => 'bpi_implementasi', 'uraian' => '1. Implementasi Materi BPI', 'sub' => [
+                ['uraian' => 'a. Perilaku (verbal non-verbal)'],
+                ['uraian' => 'b. Tata cara berpakaian'],
+            ]],
+            ['type' => 'item', 'key' => 'membaca_buku', 'uraian' => '2. Membaca buku'],
+            ['type' => 'item', 'key' => 'pelatihan', 'uraian' => '3. Mengikuti pelatihan/pembekalan (diselenggarakan lembaga maupun ikut mandiri)'],
+            ['type' => 'item', 'key' => 'melaksanakan_coaching', 'uraian' => '4. Melaksanakan coaching'],
+
+            ['type' => 'section', 'label' => 'III. KINERJA (40%)'],
+            ['type' => 'item', 'key' => 'okr_individu', 'uraian' => '1. Capaian OKR Individu', 'sub' => [
+                ['uraian' => 'a. Melaksanakan Jobdes'],
+                ['uraian' => 'b. Pendampingan akhlak siswa'],
+                ['uraian' => 'c. Pendampingan sholat siswa'],
+                ['uraian' => 'd. Pendampingan wudhu'],
+            ]],
+            ['type' => 'item', 'key' => 'kerja_harian', 'uraian' => '2. Capaian Kerja Harian'],
+        ],
+
 
         'default' => [
             ['type' => 'section', 'label' => 'I. KOMPETENSI (25%)'],
