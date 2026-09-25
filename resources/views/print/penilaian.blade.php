@@ -139,16 +139,31 @@
                 @endif
                 @endforeach
                 @php
-                    $totalJumlah = array_sum(array_filter(array_map(fn ($item) => (float) ($item['nilai'] ?? 0), $detailItems)));
+                    $ringkasan = \App\Models\PenilaianKinerja::hitungRingkasanNilai($penilaian->detail_penilaian ?? [], $penilaian->kategori ?? 'pegawai');
                 @endphp
                 <tr class="table-light">
-                    <th class="text-end" colspan="2">Total Nilai</th>
-                    <th class="text-center">{{ $totalJumlah > 0 ? str_replace('.', ',', rtrim(rtrim(number_format($totalJumlah, 2, '.', ''), '0'), '.')) : '-' }}</th>
+                    <th class="text-end" colspan="2">Total Kompetensi</th>
+                    <th class="text-center">{{ number_format($ringkasan['total_kompetensi'], 2, ',', '.') }}</th>
                     <th></th>
                 </tr>
                 <tr class="table-light">
-                    <th class="text-end" colspan="2">Nilai Rata-rata</th>
-                    <th class="text-center">{{ $penilaian->nilai_total !== null ? number_format((float) $penilaian->nilai_total, 2, ',', '.') : '-' }}</th>
+                    <th class="text-end" colspan="2">Total Komitmen</th>
+                    <th class="text-center">{{ number_format($ringkasan['total_komitmen'], 2, ',', '.') }}</th>
+                    <th></th>
+                </tr>
+                <tr class="table-light">
+                    <th class="text-end" colspan="2">Total Kinerja</th>
+                    <th class="text-center">{{ number_format($ringkasan['total_kinerja'], 2, ',', '.') }}</th>
+                    <th></th>
+                </tr>
+                <tr class="table-light fw-bold">
+                    <th class="text-end" colspan="2">Total Nilai Seluruh Aspek</th>
+                    <th class="text-center">{{ number_format($ringkasan['total_seluruh_aspek'], 2, ',', '.') }}</th>
+                    <th></th>
+                </tr>
+                <tr class="table-light fw-bold">
+                    <th class="text-end" colspan="2">NILAI KESELURUHAN</th>
+                    <th class="text-center">{{ number_format($penilaian->nilai_total ?? $ringkasan['nilai_keseluruhan'], 2, ',', '.') }}</th>
                     <th></th>
                 </tr>
             </tbody>

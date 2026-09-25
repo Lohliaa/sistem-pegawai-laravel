@@ -102,14 +102,6 @@
                     @endif
                 @endif
             @endforeach
-<tr class="table-active">
-                <th colspan="2" class="text-end">Total (Jumlah &amp; Rata-rata)</th>
-                <td class="text-center">
-                    <div>Jumlah: <strong id="total-jumlah">0,00</strong></div>
-                    <div>Rata-rata: <strong id="total-rata">0,00</strong></div>
-                </td>
-                <td></td>
-            </tr>
         </tbody>
     </table>
 </div>
@@ -126,8 +118,8 @@ document.addEventListener('DOMContentLoaded', function () {
     if (!tabel) return;
 
     const itemKeys = @json($itemKeys);
-    const elJumlah = document.getElementById('total-jumlah');
-    const elRata = document.getElementById('total-rata');
+    const items = @json($items);
+    const kompetensiWeights = @json(\App\Models\PenilaianKinerja::getKompetensiWeights($kategori ?? 'pegawai'));
 
     function nilaiItem(key) {
         const selInduk = tabel.querySelector('select.nilai-simple[data-item-key="' + key + '"]');
@@ -170,21 +162,111 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function hitungTotal() {
-        let jumlah = 0;
-        let count = 0;
+        let currentSection = '';
+        let currentSubSection = '';
+        let kompetensiItems = {};
+        let komitmenSubItems = {keislaman: [], pengembangan_diri: [], kedisiplinan: []};
+        let kinerjaSubItems = {okr_individu: [], kerja_harian: []};
 
-        itemKeys.forEach(function (key) {
+        items.forEach(function (row) {
+            const type = row.type || '';
+            if (type === 'section') {
+                const labelUpper = (row.label || '').toUpperCase();
+                if (labelUpper.indexOf('KOMPETENSI') !== -1) currentSection = 'kompetensi';
+                else if (labelUpper.indexOf('KOMITMEN') !== -1) currentSection = 'komitmen';
+                else if (labelUpper.indexOf('KINERJA') !== -1) currentSection = 'kinerja';
+                return;
+            }
+            if (type === 'sub') {
+                const labelUpper = (row.label || '').toUpperCase();
+                if (labelUpper.indexOf('KEISLAMAN') !== -1) currentSubSection = 'keislaman';
+                else if (labelUpper.indexOf('PENGEMBANGAN DIRI') !== -1) currentSubSection = 'pengembangan_diri';
+                else if (labelUpper.indexOf('KEDISIPLINAN') !== -1) currentSubSection = 'kedisiplinan';
+                return;
+            }
+            if (type !== 'item') return;
+
+            const key = row.key;
             const n = nilaiItem(key);
             muatTampilan(key);
+            if (n === null) return;
 
-            if (n !== null) {
-                jumlah += n;
-                count++;
+            if (currentSection === 'kompetensi') {
+                kompetensiItems[key] = n;
+            } else if (currentSection === 'komitmen') {
+                if (komitmenSubItems.hasOwnProperty(currentSubSection)) komitmenSubItems[currentSubSection].push(n);
+            } else if (currentSection === 'kinerja') {
+                if (kinerjaSubItems.hasOwnProperty(key)) kinerjaSubItems[key].push(n);
             }
         });
 
-        elJumlah.textContent = formatAngka(Math.round(jumlah * 100) / 100);
-        elRata.textContent = count > 0 ? formatAngka(jumlah / count) : '0,00';
+        // 1. KOMPETENSI
+        let totalKompetensiRaw = 0, totalWeightK = 0;
+        for (const k in kompetensiWeights) {
+            if (kompetensiItems.hasOwnProperty(k)) {
+                totalKompetensiRaw += kompetensiItems[k] * kompetensiWeights[k];
+                totalWeightK += kompetensiWeights[k];
+            }
+        }
+        let totalKompetensi = totalWeightK > 0 ? 0.25 * (totalKompetensiRaw / totalWeightK) : 0;
+
+        // 2. KOMITMEN (35%)
+        let sumKeislaman = komitmenSubItems.keislaman.reduce(function(a, b) { return a + b; }, 0);
+        let sumPengembanganDiri = komitmenSubItems.pengembangan_diri.reduce(function(a, b) { return a + b; }, 0);
+        let sumKedisiplinan = komitmenSubItems.kedisiplinan.reduce(function(a, b) { return a + b; }, 0);
+
+        let nilaiKeislaman = sumKeislaman * 0.40;
+        let nilaiPengembanganDiri = sumPengembanganDiri * 0.30;
+        let nilaiKedisiplinan = sumKedisiplinan * 0.30;
+
+        let nilaiKomitmen = nilaiKeislaman + nilaiPengembanganDiri + nilaiKedisiplinan;
+        let totalKomitmen = 0.35 * nilaiKomitmen;
+
+        // 3. KINERJA (40%)
+        const kinW = {okr_individu: 0.65, kerja_harian: 0.35};
+        let okrAvg = kinerjaSubItems.okr_individu.length > 0 ? kinerjaSubItems.okr_individu.reduce(function(a, b) { return a + b; }, 0) / kinerjaSubItems.okr_individu.length : 0;
+        let kerjaAvg = kinerjaSubItems.kerja_harian.length > 0 ? kinerjaSubItems.kerja_harian.reduce(function(a, b) { return a + b; }, 0) / kinerjaSubItems.kerja_harian.length : 0;
+        let totalKinerja = 0.40 * (okrAvg * kinW.okr_individu + kerjaAvg * kinW.kerja_harian);
+
+        let totalSeluruhAspek = totalKompetensi + totalKomitmen + totalKinerja;
+        
+        let sumNilai = 0;
+        let countNilai = 0;
+        itemKeys.forEach(function(key) {
+            const n = nilaiItem(key);
+            if (n !== null) {
+                sumNilai += n;
+                countNilai++;
+            }
+        });
+
+        const elTotalKompetensi = document.getElementById('total-kompetensi');
+        if (elTotalKompetensi) elTotalKompetensi.textContent = formatAngka(totalKompetensi);
+
+        const elTotalKeislaman = document.getElementById('total-keislaman');
+        if (elTotalKeislaman) elTotalKeislaman.textContent = formatAngka(nilaiKeislaman);
+
+        const elTotalPengembanganDiri = document.getElementById('total-pengembangan-diri');
+        if (elTotalPengembanganDiri) elTotalPengembanganDiri.textContent = formatAngka(nilaiPengembanganDiri);
+
+        const elTotalKedisiplinan = document.getElementById('total-kedisiplinan');
+        if (elTotalKedisiplinan) elTotalKedisiplinan.textContent = formatAngka(nilaiKedisiplinan);
+
+        const elTotalKomitmen = document.getElementById('total-komitmen');
+        if (elTotalKomitmen) elTotalKomitmen.textContent = formatAngka(totalKomitmen);
+
+        const elTotalKinerja = document.getElementById('total-kinerja');
+        if (elTotalKinerja) elTotalKinerja.textContent = formatAngka(totalKinerja);
+
+        const elTotalSeluruhAspek = document.getElementById('total-seluruh-aspek');
+        if (elTotalSeluruhAspek) elTotalSeluruhAspek.textContent = formatAngka(totalSeluruhAspek);
+
+        const elNilaiKeseluruhan = document.getElementById('nilai-keseluruhan');
+        if (elNilaiKeseluruhan) {
+            // Nilai Keseluruhan = ((Total Kompetensi + Total Komitmen + Total Kinerja) / Total Seluruh Nilai Aspek) * 100
+            const nilaiKeseluruhan = totalSeluruhAspek > 0 ? (totalSeluruhAspek / totalSeluruhAspek) * 100 : 0;
+            elNilaiKeseluruhan.textContent = formatAngka(nilaiKeseluruhan);
+        }
     }
 
     tabel.querySelectorAll('select[data-item-key]').forEach(function (sel) {

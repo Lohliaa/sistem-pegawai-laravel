@@ -502,6 +502,169 @@ class PenilaianKinerja extends Model
     /**
      * Rincian nilai tersimpan digabung dengan definisi uraian item.
      */
+
+    /**
+     * Get weighted score components for Kompetensi aspect based on category.
+     * 
+     * @param string $kategori
+     * @return array<string, float>
+     */
+    public static function getKompetensiWeights(string $kategori = 'pegawai'): array
+    {
+        return match ($kategori) {
+            'koordinator-alquran' => [
+                'hasil_supervisi_manajerial' => 0.50,
+                'hasil_ukg' => 0.50,
+            ],
+            'leader' => [
+                'hasil_supervisi' => 0.50,
+                'audit_mutu_internal' => 0.50,
+            ],
+            'musyrifah' => [
+                'supervisi_pengasuhan_asrama' => 1.00,
+            ],
+            'cs' => [
+                'hasil_supervisi_kinerja' => 1.00,
+            ],
+            'koordinator-jenjang' => [
+                'hasil_supervisi_manajerial' => 0.30,
+                'kegiatan_coaching' => 0.40,
+                'hasil_ukg' => 0.30,
+            ],
+            default => [
+                'hasil_supervisi' => 0.30,
+                'kegiatan_coaching' => 0.40,
+                'hasil_ukg' => 0.30,
+            ],
+        };
+    }
+
+    /**
+     * Get sub-aspect categories and their weights within an aspect.
+     * 
+     * @param string $aspect 'komitmen'
+     * @return array<string, float>
+     */
+    public static function getSubAspectWeights(string $aspect): array
+    {
+        return match ($aspect) {
+            'komitmen' => [
+                'keislaman' => 0.40,
+                'pengembangan_diri' => 0.30,
+                'kedisiplinan' => 0.30,
+            ],
+            'kinerja' => [
+                'okr_individu' => 0.65,
+                'kerja_harian' => 0.35,
+            ],
+            default => [],
+        };
+    }
+
+    /**
+     * Hitung ringkasan nilai seluruh aspek berdasarkan rincian penilaian dan kategori.
+     *
+     * @param array<string, mixed> $detailPenilaian
+     * @param string $kategori
+     * @return array{total_kompetensi: float, total_komitmen: float, total_kinerja: float, total_seluruh_aspek: float, nilai_keseluruhan: float, nilai_keislaman: float, nilai_pengembangan_diri: float, nilai_kedisiplinan: float}
+     */
+    public static function hitungRingkasanNilai(array $detailPenilaian, string $kategori = 'pegawai'): array
+    {
+        $kompetensiItems = [];
+        $komitmenSubItems = ['keislaman' => [], 'pengembangan_diri' => [], 'kedisiplinan' => []];
+        $kinerjaSubItems = ['okr_individu' => [], 'kerja_harian' => []];
+
+        $currentSection = '';
+        $currentSubSection = '';
+
+        foreach (self::getItems($kategori) as $row) {
+            $type = $row['type'] ?? '';
+            if ($type === 'section') {
+                $labelUpper = strtoupper($row['label'] ?? '');
+                if (stripos($labelUpper, 'KOMPETENSI') !== false) $currentSection = 'kompetensi';
+                elseif (stripos($labelUpper, 'KOMITMEN') !== false) $currentSection = 'komitmen';
+                elseif (stripos($labelUpper, 'KINERJA') !== false) $currentSection = 'kinerja';
+                continue;
+            }
+
+            if ($type === 'sub') {
+                $labelUpper = strtoupper($row['label'] ?? '');
+                if (stripos($labelUpper, 'KEISLAMAN') !== false) $currentSubSection = 'keislaman';
+                elseif (stripos($labelUpper, 'PENGEMBANGAN DIRI') !== false) $currentSubSection = 'pengembangan_diri';
+                elseif (stripos($labelUpper, 'KEDISIPLINAN') !== false) $currentSubSection = 'kedisiplinan';
+                continue;
+            }
+
+            if ($type !== 'item') continue;
+
+            $key = $row['key'];
+            $val = $detailPenilaian[$key]['nilai'] ?? null;
+
+            if ($val !== null && $val !== '') {
+                $val = (float) $val;
+                if ($currentSection === 'kompetensi') {
+                    $kompetensiItems[$key] = $val;
+                } elseif ($currentSection === 'komitmen' && isset($komitmenSubItems[$currentSubSection])) {
+                    $komitmenSubItems[$currentSubSection][] = $val;
+                } elseif ($currentSection === 'kinerja' && isset($kinerjaSubItems[$key])) {
+                    $kinerjaSubItems[$key][] = $val;
+                }
+            }
+        }
+
+        // 1. KOMPETENSI (25%)
+        $kWeights = self::getKompetensiWeights($kategori);
+        $totalKompetensiRaw = 0;
+        $totalWeightK = 0;
+        foreach ($kWeights as $k => $w) {
+            if (isset($kompetensiItems[$k])) {
+                $totalKompetensiRaw += $kompetensiItems[$k] * $w;
+                $totalWeightK += $w;
+            }
+        }
+        $totalKompetensi = $totalWeightK > 0 ? 0.25 * ($totalKompetensiRaw / $totalWeightK) : 0;
+
+        // 2. KOMITMEN (35%)
+        // Subaspek: Keislaman (40%), Pengembangan Diri (30%), Kedisiplinan (30%)
+        // Hitung JUMLAH nilai seluruh uraian (bukan rata-rata)
+        $sumKeislaman = count($komitmenSubItems['keislaman']) > 0 ? array_sum($komitmenSubItems['keislaman']) : 0;
+        $sumPengembanganDiri = count($komitmenSubItems['pengembangan_diri']) > 0 ? array_sum($komitmenSubItems['pengembangan_diri']) : 0;
+        $sumKedisiplinan = count($komitmenSubItems['kedisiplinan']) > 0 ? array_sum($komitmenSubItems['kedisiplinan']) : 0;
+
+        $nilaiKeislaman = $sumKeislaman * 0.40;
+        $nilaiPengembanganDiri = $sumPengembanganDiri * 0.30;
+        $nilaiKedisiplinan = $sumKedisiplinan * 0.30;
+
+        $nilaiKomitmen = $nilaiKeislaman + $nilaiPengembanganDiri + $nilaiKedisiplinan;
+        $totalKomitmen = 0.35 * $nilaiKomitmen;
+
+        // 3. KINERJA (40%)
+        // Subaspek: OKR Individu (65%), Kerja Harian (35%)
+        $kinerjaWeights = self::getSubAspectWeights('kinerja');
+        $okrVal = count($kinerjaSubItems['okr_individu']) > 0 ? array_sum($kinerjaSubItems['okr_individu']) / count($kinerjaSubItems['okr_individu']) : 0;
+        $kerjaVal = count($kinerjaSubItems['kerja_harian']) > 0 ? array_sum($kinerjaSubItems['kerja_harian']) / count($kinerjaSubItems['kerja_harian']) : 0;
+        $totalKinerja = 0.40 * (($okrVal * ($kinerjaWeights['okr_individu'] ?? 0.65)) + ($kerjaVal * ($kinerjaWeights['kerja_harian'] ?? 0.35)));
+
+        // 4. TOTAL NILAI SELURUH ASPEK (0-4)
+        $totalSeluruhAspek = $totalKompetensi + $totalKomitmen + $totalKinerja;
+
+        // 5. NILAI KESELURUHAN (0-100)
+        // Nilai Keseluruhan = ((Total Kompetensi + Total Komitmen + Total Kinerja) / Total Seluruh Nilai Aspek) * 100
+        $nilaiKeseluruhan = $totalSeluruhAspek > 0 ? ($totalSeluruhAspek / $totalSeluruhAspek) * 100 : 0;
+
+        return [
+            'total_kompetensi' => round($totalKompetensi, 2),
+            'total_komitmen' => round($totalKomitmen, 2),
+            'total_kinerja' => round($totalKinerja, 2),
+            'total_seluruh_aspek' => round($totalSeluruhAspek, 2),
+            'nilai_keseluruhan' => round($nilaiKeseluruhan, 2),
+            'nilai_keislaman' => round($nilaiKeislaman, 2),
+            'nilai_pengembangan_diri' => round($nilaiPengembanganDiri, 2),
+            'nilai_kedisiplinan' => round($nilaiKedisiplinan, 2),
+        ];
+    }
+
+
     public function detailItems(?string $kategori = null): array
     {
         $kategori = $kategori ?? $this->kategori ?? 'pegawai';

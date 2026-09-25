@@ -133,6 +133,20 @@
                 </tr>
             </tbody>
         </table>
+        <div class="card mt-4">
+            <div class="card-header fw-bold">Ringkasan Nilai</div>
+            <div class="card-body">
+                @php $ringkasan = \App\Models\PenilaianKinerja::hitungRingkasanNilai($penilaian->detail_penilaian ?? [], $penilaian->kategori ?? 'pegawai'); @endphp
+                <table class="table table-bordered table-sm mb-0">
+                    <tr><th>Total Kompetensi</th><td class="text-end">{{ number_format($ringkasan['total_kompetensi'], 2, ',', '.') }}</td></tr>
+                    <tr><th>Total Komitmen</th><td class="text-end">{{ number_format($ringkasan['total_komitmen'], 2, ',', '.') }}</td></tr>
+                    <tr><th>Total Kinerja</th><td class="text-end">{{ number_format($ringkasan['total_kinerja'], 2, ',', '.') }}</td></tr>
+                    <tr class="table-info fw-bold"><th>Total Nilai Seluruh Aspek</th><td class="text-end">{{ number_format($ringkasan['total_seluruh_aspek'], 2, ',', '.') }}</td></tr>
+                    <tr class="table-primary fw-bold"><th>NILAI KESELURUHAN</th><td class="text-end">{{ number_format($penilaian->nilai_total ?? $ringkasan['nilai_keseluruhan'], 2, ',', '.') }}</td></tr>
+                </table>
+            </div>
+        </div>
+
         @else
         <table class="table table-bordered mb-0">
             <thead class="table-dark">

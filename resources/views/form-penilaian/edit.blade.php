@@ -85,7 +85,19 @@
                     }
                 }
             @endphp
-            @include('partials.form-penilaian-table', ['items' => $items, 'current' => $currentDetail])
+            @include('partials.form-penilaian-table', ['items' => $items, 'current' => $currentDetail, 'kategori' => $kategori])
+            <div class="card mt-4">
+                <div class="card-header fw-bold">Ringkasan Nilai</div>
+                <div class="card-body">
+                    <table class="table table-bordered table-sm">
+                        <tr><th>Total Kompetensi</th><td class="text-end" id="total-kompetensi">0,00</td></tr>
+                        <tr><th>Total Komitmen</th><td class="text-end" id="total-komitmen">0,00</td></tr>
+                        <tr><th>Total Kinerja</th><td class="text-end" id="total-kinerja">0,00</td></tr>
+                        <tr class="table-info fw-bold"><th>Total Nilai Seluruh Aspek</th><td class="text-end" id="total-seluruh-aspek">0,00</td></tr>
+                        <tr class="table-primary fw-bold"><th>NILAI KESELURUHAN</th><td class="text-end" id="nilai-keseluruhan">0,00</td></tr>
+                    </table>
+                </div>
+            </div>
 
             <div class="mb-3 mt-3">
                 <label for="catatan" class="form-label">Catatan</label>

@@ -90,8 +90,8 @@ class FormPenilaianController extends Controller
             'pejabat_penilai_id' => $validated['pejabat_penilai_id'],
             'status_kepegawaian_id' => $validated['status_kepegawaian_id'],
             'detail_penilaian' => $detail['detail'],
-            'nilai_total' => $detail['rata'],
-            'jumlah_total' => $detail['jumlah'],
+            'nilai_total' => $detail['nilai_keseluruhan'],
+            'jumlah_total' => $detail['total_seluruh_aspek'],
             'catatan' => $validated['catatan'] ?? null,
             'kategori' => $kategori,
         ]);
@@ -139,7 +139,7 @@ class FormPenilaianController extends Controller
 
         $detail = $this->detailNilai($validated, $kategori);
 
-        if ($detail['rata'] === null) {
+        if ($detail['nilai_keseluruhan'] === null) {
             return back()->withInput()->withErrors(['nilai' => 'Minimal satu baris penilaian harus diberi nilai.']);
         }
 
@@ -149,8 +149,8 @@ class FormPenilaianController extends Controller
             'pejabat_penilai_id' => $validated['pejabat_penilai_id'],
             'status_kepegawaian_id' => $validated['status_kepegawaian_id'],
             'detail_penilaian' => $detail['detail'],
-            'nilai_total' => $detail['rata'],
-            'jumlah_total' => $detail['jumlah'],
+            'nilai_total' => $detail['nilai_keseluruhan'],
+            'jumlah_total' => $detail['total_seluruh_aspek'],
             'catatan' => $validated['catatan'] ?? null,
         ]);
 
@@ -222,80 +222,74 @@ class FormPenilaianController extends Controller
         $catatanPoin = $validated['catatan_poin'] ?? [];
 
         $detail = [];
-        $terisi = [];
+        $kompetensiItems = [];
+        $komitmenSubItems = ['keislaman' => [], 'pengembangan_diri' => [], 'kedisiplinan' => []];
+        $kinerjaSubItems = ['okr_individu' => [], 'kerja_harian' => []];
+
+        $currentSection = '';
+        $currentSubSection = '';
 
         foreach (PenilaianKinerja::getItems($kategori) as $row) {
-            if (($row['type'] ?? '') !== 'item') {
+            $type = $row['type'] ?? '';
+            if ($type === 'section') {
+                $labelUpper = strtoupper($row['label'] ?? '');
+                if (stripos($labelUpper, 'KOMPETENSI') !== false) $currentSection = 'kompetensi';
+                elseif (stripos($labelUpper, 'KOMITMEN') !== false) $currentSection = 'komitmen';
+                elseif (stripos($labelUpper, 'KINERJA') !== false) $currentSection = 'kinerja';
                 continue;
             }
+
+            if ($type === 'sub') {
+                $labelUpper = strtoupper($row['label'] ?? '');
+                if (stripos($labelUpper, 'KEISLAMAN') !== false) $currentSubSection = 'keislaman';
+                elseif (stripos($labelUpper, 'PENGEMBANGAN DIRI') !== false) $currentSubSection = 'pengembangan_diri';
+                elseif (stripos($labelUpper, 'KEDISIPLINAN') !== false) $currentSubSection = 'kedisiplinan';
+                continue;
+            }
+
+            if ($type !== 'item') continue;
 
             $key = $row['key'];
+            $catatan = isset($catatanInput[$key]) && !is_array($catatanInput[$key]) && $catatanInput[$key] !== '' ? $catatanInput[$key] : null;
 
-            $catatan = $catatanInput[$key] ?? null;
-            $catatan = is_array($catatan) ? null : $catatan; // defensif
-            $catatan = $catatan !== null && $catatan !== '' ? $catatan : null;
-
+            $val = null;
             if (empty($row['sub'])) {
-                $nilai = isset($nilaiInput[$key]) && $nilaiInput[$key] !== ''
-                    ? (int) $nilaiInput[$key]
-                    : null;
-
-                if ($nilai !== null) {
-                    $terisi[] = $nilai;
+                $val = isset($nilaiInput[$key]) && $nilaiInput[$key] !== '' ? (float) $nilaiInput[$key] : null;
+                $detail[$key] = ['nilai' => $val, 'catatan' => $catatan];
+            } else {
+                $subVals = [];
+                foreach ($row['sub'] as $i => $subDef) {
+                    $s = isset($nilaiInput[$key]['sub'][$i]) && $nilaiInput[$key]['sub'][$i] !== '' ? (float) $nilaiInput[$key]['sub'][$i] : null;
+                    $subVals[] = $s;
+                    $detail[$key]['sub'][] = ['nilai' => $s, 'catatan' => $catatanPoin[$key][$i] ?? null];
                 }
-
-                $detail[$key] = [
-                    'nilai' => $nilai,
-                    'catatan' => $catatan,
-                ];
-
-                continue;
+                $filledSub = array_filter($subVals, fn($v) => $v !== null);
+                $val = count($filledSub) > 0 ? array_sum($filledSub) / count($filledSub) : null;
+                $detail[$key]['nilai'] = $val;
+                $detail[$key]['catatan'] = $catatan;
             }
 
-            $sub = [];
-            $jumlahSub = 0;
-            $terisiSub = 0;
-
-            foreach ($row['sub'] as $i => $subDef) {
-                $subNilai = isset($nilaiInput[$key]['sub'][$i]) && $nilaiInput[$key]['sub'][$i] !== ''
-                    ? (int) $nilaiInput[$key]['sub'][$i]
-                    : null;
-
-                $subCatatan = $catatanPoin[$key][$i] ?? null;
-                $subCatatan = is_array($subCatatan) ? null : $subCatatan; // defensif
-                $subCatatan = $subCatatan !== null && $subCatatan !== '' ? $subCatatan : null;
-
-                if ($subNilai !== null) {
-                    $jumlahSub += $subNilai;
-                    $terisiSub++;
-                }
-
-                $sub[] = [
-                    'nilai' => $subNilai,
-                    'catatan' => $subCatatan,
-                ];
+            if ($val !== null) {
+                if ($currentSection === 'kompetensi') $kompetensiItems[$key] = $val;
+                elseif ($currentSection === 'komitmen' && isset($komitmenSubItems[$currentSubSection])) $komitmenSubItems[$currentSubSection][] = $val;
+                elseif ($currentSection === 'kinerja' && isset($kinerjaSubItems[$key])) $kinerjaSubItems[$key][] = $val;
             }
-
-            $rata = $terisiSub > 0 ? round($jumlahSub / $terisiSub, 2) : null;
-
-            if ($rata !== null) {
-                $terisi[] = $rata;
-            }
-
-            $detail[$key] = [
-                'nilai' => $rata,
-                'catatan' => $catatan,
-                'sub' => $sub,
-            ];
         }
 
-        $jumlah = array_sum($terisi);
-        $rata = $terisi === [] ? null : round($jumlah / count($terisi), 2);
+        // --- CALCULATION ---
+        $calc = PenilaianKinerja::hitungRingkasanNilai($detail, $kategori);
 
         return [
             'detail' => $detail,
-            'jumlah' => $jumlah,
-            'rata' => $rata,
+            'total_kompetensi' => $calc['total_kompetensi'],
+            'total_keislaman' => $calc['nilai_keislaman'],
+            'total_pengembangan_diri' => $calc['nilai_pengembangan_diri'],
+            'total_kedisiplinan' => $calc['nilai_kedisiplinan'],
+            'total_komitmen' => $calc['total_komitmen'],
+            'total_kinerja' => $calc['total_kinerja'],
+            'total_seluruh_aspek' => $calc['total_seluruh_aspek'],
+            'nilai_keseluruhan' => $calc['nilai_keseluruhan'],
+            'rata' => $calc['total_seluruh_aspek'],
         ];
     }
 
