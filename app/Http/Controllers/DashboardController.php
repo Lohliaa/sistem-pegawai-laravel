@@ -57,11 +57,61 @@ class DashboardController extends Controller
             $data['pending'] = Pengajuan::where('created_by', $user->id)->where('status', 'pending')->count();
             $data['approved'] = Pengajuan::where('created_by', $user->id)->whereIn('status', ['approved_kanit', 'approved_kabid'])->count();
         } elseif ($role == 'kanit') {
-            $data['need_approval'] = Pengajuan::where('status', 'pending')->count();
-            $data['approved'] = Pengajuan::where('status', 'approved_kanit')->count();
+            $namaPejabat = [];
+            if ($user->pegawai_id) {
+                $namaPejabat = \App\Models\PejabatPenilai::where('pegawai_id', $user->pegawai_id)->pluck('nama')->toArray();
+            }
+            $pejabatViaPegawai = \App\Models\PejabatPenilai::whereHas('pegawai', function ($q) use ($user) {
+                $q->where('user_id', $user->id);
+            })->pluck('nama')->toArray();
+            $namaPejabat = array_merge($namaPejabat, $pejabatViaPegawai);
+            if ($user->pegawai) {
+                $namaPejabat[] = $user->pegawai->nama;
+                if ($user->pegawai->pejabatPenilai) {
+                    $namaPejabat[] = $user->pegawai->pejabatPenilai->nama;
+                }
+            }
+            $namaPejabat = array_values(array_unique(array_filter($namaPejabat)));
+
+            if (empty($namaPejabat)) {
+                $data['need_approval'] = 0;
+                $data['approved'] = 0;
+            } else {
+                $data['need_approval'] = Pengajuan::where('status', 'pending')
+                    ->whereIn('pimpinan_atasan', $namaPejabat)
+                    ->count();
+                $data['approved'] = Pengajuan::where('status', 'approved_kanit')
+                    ->whereIn('pimpinan_atasan', $namaPejabat)
+                    ->count();
+            }
         } elseif ($role == 'kabid') {
-            $data['need_approval'] = Pengajuan::where('status', 'approved_kanit')->count();
-            $data['approved'] = Pengajuan::where('status', 'approved_kabid')->count();
+            $namaPejabat = [];
+            if ($user->pegawai_id) {
+                $namaPejabat = \App\Models\PejabatPenilai::where('pegawai_id', $user->pegawai_id)->pluck('nama')->toArray();
+            }
+            $pejabatViaPegawai = \App\Models\PejabatPenilai::whereHas('pegawai', function ($q) use ($user) {
+                $q->where('user_id', $user->id);
+            })->pluck('nama')->toArray();
+            $namaPejabat = array_merge($namaPejabat, $pejabatViaPegawai);
+            if ($user->pegawai) {
+                $namaPejabat[] = $user->pegawai->nama;
+                if ($user->pegawai->pejabatPenilai) {
+                    $namaPejabat[] = $user->pegawai->pejabatPenilai->nama;
+                }
+            }
+            $namaPejabat = array_values(array_unique(array_filter($namaPejabat)));
+
+            if (empty($namaPejabat)) {
+                $data['need_approval'] = 0;
+                $data['approved'] = 0;
+            } else {
+                $data['need_approval'] = Pengajuan::whereIn('status', ['pending', 'approved_kanit'])
+                    ->whereIn('pimpinan_atasan', $namaPejabat)
+                    ->count();
+                $data['approved'] = Pengajuan::where('status', 'approved_kabid')
+                    ->whereIn('pimpinan_atasan', $namaPejabat)
+                    ->count();
+            }
         }
 
         return view('dashboard.index', compact('identity', 'role', 'data'));

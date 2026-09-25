@@ -6,9 +6,11 @@
 <div class="d-flex justify-content-between align-items-center mb-3">
     <h3 class="mb-0"><i class="bi bi-eye"></i> Detail Penilaian Kinerja</h3>
     <div>
+        @if(auth()->user()->role !== 'staf')
         <a href="{{ route('form-penilaian.edit', $penilaian->id) }}" class="btn btn-warning">
             <i class="bi bi-pencil"></i> Edit
         </a>
+        @endif
         <a href="{{ route('print.penilaian', $penilaian->id) }}" target="_blank" class="btn btn-success">
             <i class="bi bi-printer"></i> Print
         </a>

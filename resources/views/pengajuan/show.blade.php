@@ -26,8 +26,19 @@
             </div>
             <div class="col-md-6 mb-3"><strong>Nama:</strong> {{ $pengajuan->nama }}</div>
             <div class="col-md-6 mb-3"><strong>Unit:</strong> {{ $pengajuan->unit }}</div>
+            <div class="col-md-6 mb-3"><strong>Pimpinan Atasan:</strong> {{ $pengajuan->pimpinan_atasan }}</div>
             <div class="col-md-6 mb-3"><strong>Tanggal Lahir:</strong> {{ $pengajuan->tanggal_lahir->format('d/m/Y') }}</div>
             <div class="col-md-6 mb-3"><strong>TMT:</strong> {{ $pengajuan->tanggal_tmt->format('d/m/Y') }}</div>
+            @if($pengajuan->file_pengajuan)
+            <div class="col-md-12 mb-3">
+                <strong>File Lampiran:</strong>
+                <div class="mt-1">
+                    <a href="{{ asset('storage/' . $pengajuan->file_pengajuan) }}" target="_blank" class="btn btn-sm btn-outline-primary">
+                        <i class="bi bi-file-earmark-text"></i> Lihat / Unduh File Lampiran
+                    </a>
+                </div>
+            </div>
+            @endif
             @if($pengajuan->keterangan)
             <div class="col-md-12 mb-3"><strong>Keterangan:</strong> {{ $pengajuan->keterangan }}</div>
             @endif
@@ -45,10 +56,14 @@
             <button type="submit" class="btn btn-danger" onclick="return confirm('Tolak pengajuan ini?')">Tolak</button>
         </form>
         @endif
-        @if(auth()->user()->role == 'kabid' && $pengajuan->status == 'approved_kanit')
+        @if(auth()->user()->role == 'kabid' && ($pengajuan->status == 'pending' || $pengajuan->status == 'approved_kanit'))
         <form action="{{ route('pengajuan.approve', $pengajuan->id) }}" method="POST" class="d-inline">
             @csrf
             <button type="submit" class="btn btn-success">Setujui</button>
+        </form>
+        <form action="{{ route('pengajuan.reject', $pengajuan->id) }}" method="POST" class="d-inline">
+            @csrf
+            <button type="submit" class="btn btn-danger" onclick="return confirm('Tolak pengajuan ini?')">Tolak</button>
         </form>
         @endif
     </div>

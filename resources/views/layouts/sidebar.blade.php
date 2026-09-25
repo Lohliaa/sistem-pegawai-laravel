@@ -23,9 +23,6 @@
             <i class="bi bi-file-earmark-text"></i> Manajemen Pengajuan
         </a>
     @elseif(auth()->user()->role == 'staf')
-        <a href="{{ route('pengajuan.create') }}" class="{{ request()->routeIs('pengajuan.create') ? 'active' : '' }}">
-            <i class="bi bi-file-earmark-plus"></i> Buat Pengajuan
-        </a>
         <a href="{{ route('pengajuan.index') }}" class="{{ request()->routeIs('pengajuan.index') ? 'active' : '' }}">
             <i class="bi bi-list-check"></i> Daftar Pengajuan
         </a>
@@ -33,6 +30,10 @@
         <a href="{{ route('pengajuan.index') }}" class="{{ request()->routeIs('pengajuan.*') ? 'active' : '' }}">
             <i class="bi bi-check-circle"></i> Persetujuan Pengajuan
         </a>
+        <a href="{{ route('pengajuan.riwayat') }}" class="{{ request()->routeIs('pengajuan.riwayat') ? 'active' : '' }}">
+            <i class="bi bi-clock-history"></i> Riwayat Pengajuan
+        </a>
+
     @endif
 
     <!-- Admin Menu -->
