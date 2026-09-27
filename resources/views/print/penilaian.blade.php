@@ -190,16 +190,21 @@
             </div>
         </div>
 
+        @php
+            $namaKetuaYayasan = $ketuaYayasan?->nama ?? \App\Models\Pegawai::where('jabatan', 'Ketua Yayasan Permata Mojokerto')->value('nama');
+            $namaKabidSdm = $kabidSdm?->nama ?? \App\Models\Pegawai::where('jabatan', 'Kepala Bidang SDM')->value('nama');
+        @endphp
+
         <div class="row mt-5">
             <div class="col-6 text-center">
                 <p>Mengetahui,<br>Ketua Yayasan Permata Mojokerto,</p>
                 <br><br><br>
-                <p><strong>({{ $ketuaYayasan?->nama ?? '...................................' }})</strong></p>
+                <p><strong>({{ $namaKetuaYayasan ?? '...................................' }})</strong></p>
             </div>
             <div class="col-6 text-center">
                 <p>Kepala Bidang SDM,</p>
                 <br><br><br>
-                <p><strong>({{ $kabidSdm?->nama ?? '...................................' }})</strong></p>
+                <p><strong>({{ $namaKabidSdm ?? '...................................' }})</strong></p>
             </div>
         </div>
     </div>
