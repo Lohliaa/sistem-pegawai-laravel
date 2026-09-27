@@ -263,9 +263,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
         const elNilaiKeseluruhan = document.getElementById('nilai-keseluruhan');
         if (elNilaiKeseluruhan) {
-            // Nilai Keseluruhan = ((Total Kompetensi + Total Komitmen + Total Kinerja) / Total Seluruh Nilai Aspek) * 100
-            const nilaiKeseluruhan = totalSeluruhAspek > 0 ? (totalSeluruhAspek / totalSeluruhAspek) * 100 : 0;
-            elNilaiKeseluruhan.textContent = formatAngka(nilaiKeseluruhan);
+            // Nilai Keseluruhan = ((Total Kompetensi + Total Komitmen + Total Kinerja) / 7.36) * 100
+            elNilaiKeseluruhan.textContent = formatAngka((totalSeluruhAspek / 7.36) * 100);
         }
     }
 
