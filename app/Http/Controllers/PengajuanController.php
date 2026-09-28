@@ -217,5 +217,33 @@ class PengajuanController extends Controller
 
         return back()->with('error', 'Tidak dapat menolak pengajuan ini!');
     }
+
+    public function processAdmin(Request $request, Pengajuan $pengajuan)
+    {
+        $user = Auth::user();
+        if ($user->role == 'admin' && in_array($pengajuan->status, ['approved_kanit', 'approved_kabid'])) {
+            $pengajuan->update([
+                'processed_by' => $user->id,
+                'processed_date' => now(),
+                'catatan_admin' => $request->catatan_admin,
+            ]);
+            return back()->with('success', 'Pengajuan berhasil diproses oleh Admin!');
+        }
+        return back()->with('error', 'Tidak dapat memproses pengajuan ini!');
+    }
+
+    public function completeAdmin(Request $request, Pengajuan $pengajuan)
+    {
+        $user = Auth::user();
+        if ($user->role == 'admin' && in_array($pengajuan->status, ['approved_kanit', 'approved_kabid'])) {
+            $pengajuan->update([
+                'completed_by' => $user->id,
+                'completed_date' => now(),
+                'catatan_admin' => $request->catatan_admin ? $request->catatan_admin : $pengajuan->catatan_admin,
+            ]);
+            return back()->with('success', 'Pengajuan berhasil diselesaikan oleh Admin!');
+        }
+        return back()->with('error', 'Tidak dapat menyelesaikan pengajuan ini!');
+    }
 }
 

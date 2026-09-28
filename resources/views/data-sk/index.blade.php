@@ -47,14 +47,13 @@
             <thead class="table-dark">
                 <tr>
                     <th width="60">No</th>
-                    <th>No. SK</th>
+                    <th>No SK</th>
                     <th>Nama</th>
-                    <th>Status</th>
+                    <th>Gelar</th>
+                    <th>Status Kepegawaian</th>
                     <th>Unit Kerja</th>
-                    <th>Jabatan</th>
-                    <th class="text-end">Gaji Pokok</th>
-                    <th class="text-end">THP</th>
-                    <th width="200">Aksi</th>
+                    <th>TMT</th>
+                    <th width="150">Aksi</th>
                 </tr>
             </thead>
             <tbody>
@@ -63,11 +62,10 @@
                     <td>{{ $sks->firstItem() + $index }}</td>
                     <td>{{ $sk->no_sk ?: '-' }}</td>
                     <td>{{ $sk->nama }}</td>
+                    <td>{{ $sk->gelar ?: '-' }}</td>
                     <td>{{ $sk->status_kepegawaian ?: '-' }}</td>
                     <td>{{ $sk->unit_kerja ?: '-' }}</td>
-                    <td>{{ $sk->jabatan ?: '-' }}</td>
-                    <td class="text-end">{{ $sk->gaji_pokok ? number_format((float) $sk->gaji_pokok, 0, ',', '.') : '-' }}</td>
-                    <td class="text-end">{{ $sk->thp ? number_format((float) $sk->thp, 0, ',', '.') : '-' }}</td>
+                    <td>{{ $sk->tmt ?: '-' }}</td>
                     <td>
                         <a href="{{ route('data-sk.show', $sk->id) }}" class="btn btn-sm btn-info">
                             <i class="bi bi-eye"></i>
@@ -87,7 +85,7 @@
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="9" class="text-center">Belum ada data SK</td>
+                    <td colspan="8" class="text-center">Belum ada data SK</td>
                 </tr>
                 @endforelse
             </tbody>

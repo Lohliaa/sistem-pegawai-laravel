@@ -14,31 +14,27 @@ class DataSkController extends Controller
      * Urutan kolom untuk import & export Excel (kolom database => judul kolom).
      */
     private const KOLOM_EXCEL = [
-        'no_sk' => 'No. SK',
-        'status_kepegawaian' => 'Status Kepegawaian',
+        'no_sk' => 'No SK',
+        'no_tambahan' => 'No Tambahan',
         'nama' => 'Nama',
         'gelar' => 'Gelar',
-        'alamat' => 'Alamat',
         'tempat_lahir' => 'Tempat Lahir',
         'tanggal_lahir' => 'Tanggal Lahir',
+        'nipy' => 'NIPY',
+        'gol_ruang' => 'Gol Ruang',
+        'status_kepegawaian' => 'Status Kepegawaian',
         'unit_kerja' => 'Unit Kerja',
-        'jabatan' => 'Jabatan',
+        'tmt' => 'TMT',
         'tgl_mulai' => 'Tanggal Mulai',
-        'gaji_pokok' => 'Gaji Pokok',
-        'tunjangan_jabatan' => 'Tunjangan Jabatan',
-        'tunjangan_transport' => 'Tunjangan Transport',
-        'tunjangan_kinerja' => 'Tunjangan Kinerja',
-        'tunjangan_fungsional' => 'Tunjangan Fungsional',
-        'thp' => 'THP',
-        'terbilang' => 'Terbilang',
-        'saksi1' => 'Saksi 1',
-        'saksi2' => 'Saksi 2',
+        'berlaku' => 'Berlaku (bulan)',
+        'tanggal_akhir' => 'Tanggal Akhir',
+        'tanggal_ditetapkan' => 'Tanggal Ditetapkan',
     ];
 
     /**
      * Kolom yang disimpan sebagai tanggal (Y-m-d).
      */
-    private const KOLOM_TANGGAL = ['tanggal_lahir', 'tgl_mulai'];
+    private const KOLOM_TANGGAL = ['tanggal_lahir', 'tgl_mulai', 'tanggal_akhir', 'tanggal_ditetapkan'];
 
     /**
      * Format tanggal yang diterima dari form/import (Excel memakai d/m/Y).
@@ -48,14 +44,7 @@ class DataSkController extends Controller
     /**
      * Kolom nominal rupiah.
      */
-    private const KOLOM_RUPIAH = [
-        'gaji_pokok',
-        'tunjangan_jabatan',
-        'tunjangan_transport',
-        'tunjangan_kinerja',
-        'tunjangan_fungsional',
-        'thp',
-    ];
+    private const KOLOM_RUPIAH = [];
 
     public function index(Request $request)
     {
@@ -254,9 +243,9 @@ class DataSkController extends Controller
         foreach (array_keys(self::KOLOM_EXCEL) as $kolom) {
             $rules[$kolom] = match (true) {
                 $kolom === 'nama' => 'required|string|max:255',
+                $kolom === 'berlaku' => 'nullable|integer',
                 in_array($kolom, self::KOLOM_TANGGAL, true) => ['nullable', 'date_format:'.self::FORMAT_TANGGAL],
                 in_array($kolom, self::KOLOM_RUPIAH, true) => ['nullable', 'string', 'max:255', 'regex:/^\s*(rp\.?\s*)?[0-9][0-9.,\s]*$/i'],
-                in_array($kolom, ['alamat', 'terbilang'], true) => 'nullable|string',
                 default => 'nullable|string|max:255',
             };
         }

@@ -15,6 +15,7 @@ class DataMou extends Model
         'status_detail',
         'nama',
         'gelar',
+        'penyetaraan',
         'hari_kerja',
         'jam_kerja',
         'alamat',

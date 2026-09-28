@@ -10,29 +10,27 @@ class DataSk extends Model
     
     protected $fillable = [
         'no_sk',
-        'status_kepegawaian',
+        'no_tambahan',
         'nama',
         'gelar',
-        'alamat',
         'tempat_lahir',
         'tanggal_lahir',
+        'nipy',
+        'gol_ruang',
+        'status_kepegawaian',
         'unit_kerja',
-        'jabatan',
+        'tmt',
         'tgl_mulai',
-        'gaji_pokok',
-        'tunjangan_jabatan',
-        'tunjangan_transport',
-        'tunjangan_kinerja',
-        'tunjangan_fungsional',
-        'thp',
-        'terbilang',
-        'saksi1',
-        'saksi2',
+        'berlaku',
+        'tanggal_akhir',
+        'tanggal_ditetapkan',
     ];
 
     protected $casts = [
         'tanggal_lahir' => 'date',
         'tgl_mulai' => 'date',
+        'tanggal_akhir' => 'date',
+        'tanggal_ditetapkan' => 'date',
     ];
 }
 

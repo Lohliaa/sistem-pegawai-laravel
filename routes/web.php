@@ -36,7 +36,20 @@ Route::middleware('auth')->group(function () {
         Route::get('/pengajuan/create', [PengajuanController::class, 'create'])->name('pengajuan.create');
         Route::post('/pengajuan', [PengajuanController::class, 'store'])->name('pengajuan.store');
     });
-        Route::delete('/pengajuan/{pengajuan}', [PengajuanController::class, 'destroy'])->name('pengajuan.destroy');
+    
+    // Approval Routes
+    Route::middleware('role:kanit,kabid')->group(function () {
+        Route::post('/pengajuan/{pengajuan}/approve', [PengajuanController::class, 'approve'])->name('pengajuan.approve');
+        Route::post('/pengajuan/{pengajuan}/reject', [PengajuanController::class, 'reject'])->name('pengajuan.reject');
+    });
+
+    // Admin Process / Complete Routes
+    Route::middleware('role:admin')->group(function () {
+        Route::post('/pengajuan/{pengajuan}/process', [PengajuanController::class, 'processAdmin'])->name('pengajuan.process');
+        Route::post('/pengajuan/{pengajuan}/complete', [PengajuanController::class, 'completeAdmin'])->name('pengajuan.complete');
+    });
+
+    Route::delete('/pengajuan/{pengajuan}', [PengajuanController::class, 'destroy'])->name('pengajuan.destroy');
 
 
     Route::get('/pengajuan/riwayat', [PengajuanController::class, 'riwayat'])->name('pengajuan.riwayat');

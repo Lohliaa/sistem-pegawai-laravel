@@ -12,7 +12,7 @@
             <div class="col-md-4">
                 <label class="form-label">Cari</label>
                 <input type="text" name="search" class="form-control" value="{{ request('search') }}"
-                       placeholder="Nama / No. SK / Unit Kerja">
+                       placeholder="Nama / Nomer Surat / Unit Kerja">
             </div>
             <div class="col-md-3">
                 <label class="form-label">Status Kepegawaian</label>
@@ -47,10 +47,11 @@
             <thead class="table-dark">
                 <tr>
                     <th width="60">No</th>
-                    <th>No. SK</th>
+                    <th>Nomer Surat</th>
                     <th>Nama</th>
                     <th>Status</th>
                     <th>Unit Kerja</th>
+                    <th>Alamat</th>
                     <th class="text-end">Gaji Pokok</th>
                     <th class="text-end">THP</th>
                     <th width="200">Aksi</th>
@@ -64,6 +65,7 @@
                     <td>{{ $mou->nama }}</td>
                     <td>{{ $mou->status_kepegawaian ?: '-' }}{{ $mou->status_detail ? '/'.$mou->status_detail : '' }}</td>
                     <td>{{ $mou->unit_kerja ?: '-' }}</td>
+                    <td>{{ $mou->alamat ?: '-' }}</td>
                     <td class="text-end">{{ $mou->gaji_pokok ? number_format((float) $mou->gaji_pokok, 0, ',', '.') : '-' }}</td>
                     <td class="text-end">{{ $mou->thp ? number_format((float) $mou->thp, 0, ',', '.') : '-' }}</td>
                     <td>
@@ -85,7 +87,7 @@
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="8" class="text-center">Belum ada data MOU</td>
+                    <td colspan="9" class="text-center">Belum ada data MOU</td>
                 </tr>
                 @endforelse
             </tbody>

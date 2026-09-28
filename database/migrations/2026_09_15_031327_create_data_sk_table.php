@@ -11,27 +11,24 @@ return new class extends Migration
      */
     public function up(): void
     {
+        Schema::dropIfExists('data_sk');
         Schema::create('data_sk', function (Blueprint $table) {
             $table->id();
             $table->string('no_sk')->nullable();
-            $table->string('status_kepegawaian')->nullable();
+            $table->string('no_tambahan')->nullable();
             $table->string('nama')->nullable();
             $table->string('gelar')->nullable();
-            $table->text('alamat')->nullable();
             $table->string('tempat_lahir')->nullable();
             $table->date('tanggal_lahir')->nullable();
+            $table->string('nipy')->nullable();
+            $table->string('gol_ruang')->nullable();
+            $table->string('status_kepegawaian')->nullable();
             $table->string('unit_kerja')->nullable();
-            $table->string('jabatan')->nullable();
+            $table->string('tmt')->nullable();
             $table->date('tgl_mulai')->nullable();
-            $table->string('gaji_pokok')->nullable();
-            $table->string('tunjangan_jabatan')->nullable();
-            $table->string('tunjangan_transport')->nullable();
-            $table->string('tunjangan_kinerja')->nullable();
-            $table->string('tunjangan_fungsional')->nullable();
-            $table->string('thp')->nullable();
-            $table->text('terbilang')->nullable();
-            $table->string('saksi1')->nullable();
-            $table->string('saksi2')->nullable();
+            $table->integer('berlaku')->nullable();
+            $table->date('tanggal_akhir')->nullable();
+            $table->date('tanggal_ditetapkan')->nullable();
             $table->timestamps();
         });
     }

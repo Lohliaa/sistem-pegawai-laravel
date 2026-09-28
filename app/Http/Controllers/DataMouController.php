@@ -14,12 +14,13 @@ class DataMouController extends Controller
      * Urutan kolom untuk import & export Excel (kolom database => judul kolom).
      */
     private const KOLOM_EXCEL = [
-        'no_sk' => 'No. SK',
+        'no_sk' => 'Nomer Surat',
         'no_tambahan' => 'No. Tambahan',
         'status_kepegawaian' => 'Status Kepegawaian',
         'status_detail' => 'Status Detail',
         'nama' => 'Nama',
         'gelar' => 'Gelar',
+        'penyetaraan' => 'Penyetaraan',
         'hari_kerja' => 'Hari Kerja',
         'jam_kerja' => 'Jam Kerja',
         'alamat' => 'Alamat',

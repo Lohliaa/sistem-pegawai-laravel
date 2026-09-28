@@ -27,7 +27,7 @@
                 <td>{{ $mou->id }}</td>
             </tr>
             <tr>
-                <th>No. SK</th>
+                <th>Nomer Surat</th>
                 <td>{{ $mou->no_sk ?: '-' }}</td>
             </tr>
             <tr>
@@ -45,6 +45,10 @@
             <tr>
                 <th>Gelar</th>
                 <td>{{ $mou->gelar ?: '-' }}</td>
+            </tr>
+            <tr>
+                <th>Penyetaraan</th>
+                <td>{{ $mou->penyetaraan ?: '-' }}</td>
             </tr>
             <tr>
                 <th>Hari Kerja</th>
