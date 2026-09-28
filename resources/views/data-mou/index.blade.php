@@ -32,6 +32,9 @@
                     <label class="btn btn-outline-primary mb-0" data-bs-toggle="modal" data-bs-target="#importModal" title="Import Excel" style="cursor: pointer;">
                         <i class="bi bi-upload"></i>
                     </label>
+                    <a href="{{ route('data-mou.pembaruan') }}" class="btn btn-secondary" title="Pembaruan MoU">
+                        <i class="bi bi-arrow-repeat"></i>
+                    </a>
                     <a href="{{ route('data-mou.create') }}" class="btn btn-primary" title="Tambah">
                         <i class="bi bi-plus-circle"></i>
                     </a>

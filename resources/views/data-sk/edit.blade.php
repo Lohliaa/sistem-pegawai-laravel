@@ -40,7 +40,7 @@
                 </div>
                 <div class="col-md-6">
                     <label for="tanggal_lahir" class="form-label">Tanggal Lahir</label>
-                    <input type="text" name="tanggal_lahir" id="tanggal_lahir" class="form-control" value="{{ old('tanggal_lahir', optional($sk->tanggal_lahir)->format('d/m/Y')) }}" placeholder="dd/mm/YYYY">
+                    <input type="date" name="tanggal_lahir" id="tanggal_lahir" class="form-control" value="{{ old('tanggal_lahir', optional($sk->tanggal_lahir)->format('Y-m-d')) }}">
                 </div>
             </div>
 
@@ -74,11 +74,11 @@
             <div class="row g-3 mt-1">
                 <div class="col-md-6">
                     <label for="tmt" class="form-label">TMT</label>
-                    <input type="text" name="tmt" id="tmt" class="form-control" value="{{ old('tmt', $sk->tmt) }}">
+                    <input type="date" name="tmt" id="tmt" class="form-control" value="{{ old('tmt', optional($sk->tmt)->format('Y-m-d')) }}">
                 </div>
                 <div class="col-md-6">
                     <label for="tgl_mulai" class="form-label">Tanggal Mulai</label>
-                    <input type="text" name="tgl_mulai" id="tgl_mulai" class="form-control" value="{{ old('tgl_mulai', optional($sk->tgl_mulai)->format('d/m/Y')) }}" placeholder="dd/mm/YYYY">
+                    <input type="date" name="tgl_mulai" id="tgl_mulai" class="form-control" value="{{ old('tgl_mulai', optional($sk->tgl_mulai)->format('Y-m-d')) }}">
                 </div>
             </div>
 
@@ -89,11 +89,11 @@
                 </div>
                 <div class="col-md-4">
                     <label for="tanggal_akhir" class="form-label">Tanggal Akhir</label>
-                    <input type="text" name="tanggal_akhir" id="tanggal_akhir" class="form-control" value="{{ old('tanggal_akhir', optional($sk->tanggal_akhir)->format('d/m/Y')) }}" placeholder="dd/mm/YYYY">
+                    <input type="date" name="tanggal_akhir" id="tanggal_akhir" class="form-control" value="{{ old('tanggal_akhir', optional($sk->tanggal_akhir)->format('Y-m-d')) }}">
                 </div>
                 <div class="col-md-4">
                     <label for="tanggal_ditetapkan" class="form-label">Tanggal Ditetapkan</label>
-                    <input type="text" name="tanggal_ditetapkan" id="tanggal_ditetapkan" class="form-control" value="{{ old('tanggal_ditetapkan', optional($sk->tanggal_ditetapkan)->format('d/m/Y')) }}" placeholder="dd/mm/YYYY">
+                    <input type="date" name="tanggal_ditetapkan" id="tanggal_ditetapkan" class="form-control" value="{{ old('tanggal_ditetapkan', optional($sk->tanggal_ditetapkan)->format('Y-m-d')) }}">
                 </div>
             </div>
 

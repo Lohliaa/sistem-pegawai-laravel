@@ -68,7 +68,7 @@
             </tr>
             <tr>
                 <th>TMT</th>
-                <td>{{ $sk->tmt ?: '-' }}</td>
+                <td>{{ optional($sk->tmt)->format('d-m-Y') ?: '-' }}</td>
             </tr>
             <tr>
                 <th>Tanggal Mulai</th>

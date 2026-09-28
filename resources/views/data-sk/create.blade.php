@@ -39,7 +39,7 @@
                 </div>
                 <div class="col-md-6">
                     <label for="tanggal_lahir" class="form-label">Tanggal Lahir</label>
-                    <input type="text" name="tanggal_lahir" id="tanggal_lahir" class="form-control" value="{{ old('tanggal_lahir') }}" placeholder="dd/mm/YYYY">
+                    <input type="date" name="tanggal_lahir" id="tanggal_lahir" class="form-control" value="{{ old('tanggal_lahir') }}">
                 </div>
             </div>
 
@@ -73,11 +73,11 @@
             <div class="row g-3 mt-1">
                 <div class="col-md-6">
                     <label for="tmt" class="form-label">TMT</label>
-                    <input type="text" name="tmt" id="tmt" class="form-control" value="{{ old('tmt') }}">
+                    <input type="date" name="tmt" id="tmt" class="form-control" value="{{ old('tmt') }}">
                 </div>
                 <div class="col-md-6">
                     <label for="tgl_mulai" class="form-label">Tanggal Mulai</label>
-                    <input type="text" name="tgl_mulai" id="tgl_mulai" class="form-control" value="{{ old('tgl_mulai') }}" placeholder="dd/mm/YYYY">
+                    <input type="date" name="tgl_mulai" id="tgl_mulai" class="form-control" value="{{ old('tgl_mulai') }}">
                 </div>
             </div>
 
@@ -88,11 +88,11 @@
                 </div>
                 <div class="col-md-4">
                     <label for="tanggal_akhir" class="form-label">Tanggal Akhir</label>
-                    <input type="text" name="tanggal_akhir" id="tanggal_akhir" class="form-control" value="{{ old('tanggal_akhir') }}" placeholder="dd/mm/YYYY">
+                    <input type="date" name="tanggal_akhir" id="tanggal_akhir" class="form-control" value="{{ old('tanggal_akhir') }}">
                 </div>
                 <div class="col-md-4">
                     <label for="tanggal_ditetapkan" class="form-label">Tanggal Ditetapkan</label>
-                    <input type="text" name="tanggal_ditetapkan" id="tanggal_ditetapkan" class="form-control" value="{{ old('tanggal_ditetapkan') }}" placeholder="dd/mm/YYYY">
+                    <input type="date" name="tanggal_ditetapkan" id="tanggal_ditetapkan" class="form-control" value="{{ old('tanggal_ditetapkan') }}">
                 </div>
             </div>
 

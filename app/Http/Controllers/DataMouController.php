@@ -6,6 +6,8 @@ use App\Models\DataMou;
 use App\Models\StatusKepegawaian;
 use App\Support\ExcelHelper;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
 use Throwable;
 
 class DataMouController extends Controller
@@ -394,4 +396,73 @@ class DataMouController extends Controller
 
         return true;
     }
+
+    public function pembaruanMou(Request $request)
+    {
+        $bulan = $request->get('bulan', 'semua');
+        $tahun = $request->get('tahun', 'semua');
+        $query = DataMou::query();
+
+        if ($bulan !== 'semua' && is_numeric($bulan)) {
+            $query->where(DB::raw('MONTH(tgl_mou)'), $bulan);
+        }
+
+        if ($tahun !== 'semua' && is_numeric($tahun)) {
+            $query->where(DB::raw('YEAR(tgl_mou)'), $tahun);
+        }
+
+        $mous = $query->get()->map(function ($mou) {
+            $mou->bulan_mou = $mou->tgl_mou ? Carbon::parse($mou->tgl_mou)->format('F') : '-';
+            return $mou;
+        });
+
+        $tahunList = DataMou::whereNotNull('tgl_mou')
+            ->select(DB::raw('YEAR(tgl_mou) as tahun'))
+            ->distinct()
+            ->orderBy('tahun', 'desc')
+            ->pluck('tahun');
+
+        return view('data-mou.pembaruan', compact('mous', 'bulan', 'tahun', 'tahunList'));
+    }
+
+    public function exportPembaruan(Request $request)
+    {
+        $bulan = $request->get('bulan', 'semua');
+        $tahun = $request->get('tahun', 'semua');
+        $query = DataMou::query();
+
+        if ($bulan !== 'semua' && is_numeric($bulan)) {
+            $query->where(DB::raw('MONTH(tgl_mou)'), $bulan);
+        }
+
+        if ($tahun !== 'semua' && is_numeric($tahun)) {
+            $query->where(DB::raw('YEAR(tgl_mou)'), $tahun);
+        }
+
+        $mous = $query->get();
+        $headings = ['No', 'Nama', 'Status Kepegawaian', 'Unit Kerja', 'Tanggal MoU', 'Tanggal Akhir'];
+        $rows = [];
+
+        foreach ($mous as $index => $mou) {
+            $rows[] = [
+                $index + 1,
+                $mou->nama,
+                $mou->status_kepegawaian,
+                $mou->unit_kerja,
+                $mou->tgl_mou ? Carbon::parse($mou->tgl_mou)->format('d-m-Y') : '-',
+                $mou->tanggal_akhir ? Carbon::parse($mou->tanggal_akhir)->format('d-m-Y') : '-',
+            ];
+        }
+
+        $namaBulan = 'Semua';
+        if ($bulan !== 'semua' && is_numeric($bulan)) {
+            $namaBulan = Carbon::create()->month((int)$bulan)->format('F');
+        }
+
+        $namaTahun = ($tahun !== 'semua' && is_numeric($tahun)) ? $tahun : 'Semua';
+
+        $spreadsheet = ExcelHelper::spreadsheet($headings, $rows, 'Pembaruan MoU');
+        return ExcelHelper::download($spreadsheet, 'Pembaruan_MoU_' . $namaBulan . '_' . $namaTahun . '_' . date('Y-m-d') . '.xlsx');
+    }
+
 }

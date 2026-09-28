@@ -1,6 +1,8 @@
 <?php
 
 namespace App\Http\Controllers;
+use Carbon\Carbon;
+
 
 use App\Models\DataSk;
 use App\Models\StatusKepegawaian;
@@ -311,6 +313,93 @@ class DataSkController extends Controller
 
         return $data;
     }
+    /**
+     * Tampilkan daftar pegawai yang harus melakukan pembaruan SK berdasarkan TMT.
+     */
+    public function pembaruan(Request $request)
+    {
+        $periode = $request->get('periode', 'semua');
+        $tahun = $request->query('tahun', 'semua');
+        $query = DataSk::query();
+
+        if ($tahun !== 'semua') {
+            $query->whereYear('tmt', $tahun);
+        }
+
+        $sks = $query->get()->filter(function ($sk) use ($periode) {
+            if (!$sk->tmt) return false;
+
+            try {
+                $month = Carbon::parse($sk->tmt)->month;
+                $sk->periode_pembaruan = in_array($month, [10, 11, 12, 1, 2, 3]) ? 'Januari' : 'Juli';
+
+                if ($periode === 'januari') {
+                    return $sk->periode_pembaruan === 'Januari';
+                } elseif ($periode === 'juli') {
+                    return $sk->periode_pembaruan === 'Juli';
+                }
+                return true;
+            } catch (\Exception $e) {
+                return false;
+            }
+        });
+
+        $tahunList = DataSk::query()
+            ->whereNotNull('tmt')
+            ->selectRaw('YEAR(tmt) as tahun')
+            ->distinct()
+            ->orderByDesc('tahun')
+            ->pluck('tahun');
+
+        return view('data-sk.pembaruan', compact('sks', 'periode', 'tahun', 'tahunList'));
+    }
+
+    /**
+     * Export daftar pembaruan SK ke Excel.
+     */
+    public function exportPembaruan(Request $request)
+    {
+        $periode = $request->get('periode', 'semua');
+        $tahun = $request->query('tahun', 'semua');
+        $query = DataSk::query();
+
+        if ($tahun !== 'semua') {
+            $query->whereYear('tmt', $tahun);
+        }
+
+        $sks = $query->get()->filter(function ($sk) use ($periode) {
+            if (!$sk->tmt) return false;
+            try {
+                $month = Carbon::parse($sk->tmt)->month;
+                $sk->periode_pembaruan = in_array($month, [10, 11, 12, 1, 2, 3]) ? 'Januari' : 'Juli';
+                if ($periode === 'januari') return $sk->periode_pembaruan === 'Januari';
+                if ($periode === 'juli') return $sk->periode_pembaruan === 'Juli';
+                return true;
+            } catch (\Exception $e) {
+                return false;
+            }
+        });
+
+        $headings = ['No', 'Nama', 'TMT', 'Unit', 'Status Kepegawaian', 'Periode Pembaruan SK'];
+        $rows = [];
+        $i = 1;
+
+        foreach ($sks as $sk) {
+            $rows[] = [
+                $i++,
+                $sk->nama,
+                $sk->tmt,
+                $sk->unit_kerja,
+                $sk->status_kepegawaian,
+                $sk->periode_pembaruan
+            ];
+        }
+
+        $spreadsheet = ExcelHelper::spreadsheet($headings, $rows, 'Pembaruan SK');
+        return ExcelHelper::download($spreadsheet, 'Pembaruan_SK_' . ucfirst($periode) . '_' . date('Y-m-d') . '.xlsx');
+    }
+
+
 
     /**
      * Normalisasi data hasil import Excel.

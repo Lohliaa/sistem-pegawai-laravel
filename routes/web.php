@@ -70,16 +70,21 @@ Route::middleware('auth')->group(function () {
         Route::post('manajemen-user/upload-excel', [ManajemenUserController::class, 'importExcel'])->name('manajemen-user.import');
         
         // Data MOU
+        Route::get('data-mou/pembaruan', [DataMouController::class, 'pembaruanMou'])->name('data-mou.pembaruan');
+        Route::get('data-mou/pembaruan/export', [DataMouController::class, 'exportPembaruan'])->name('data-mou.pembaruan.export');
         Route::get('data-mou/template', [DataMouController::class, 'template'])->name('data-mou.template');
         Route::resource('data-mou', DataMouController::class);
         Route::post('data-mou/import', [DataMouController::class, 'import'])->name('data-mou.import');
         Route::get('data-mou/export/excel', [DataMouController::class, 'export'])->name('data-mou.export');
         
         // Data SK
+        Route::get('data-sk/pembaruan', [DataSkController::class, 'pembaruan'])->name('data-sk.pembaruan');
+        Route::get('data-sk/pembaruan/export', [DataSkController::class, 'exportPembaruan'])->name('data-sk.pembaruan.export');
         Route::get('data-sk/template', [DataSkController::class, 'template'])->name('data-sk.template');
-        Route::resource('data-sk', DataSkController::class);
-        Route::post('data-sk/import', [DataSkController::class, 'import'])->name('data-sk.import');
         Route::get('data-sk/export/excel', [DataSkController::class, 'export'])->name('data-sk.export');
+        Route::post('data-sk/import', [DataSkController::class, 'import'])->name('data-sk.import');
+        Route::resource('data-sk', DataSkController::class);
+
     });
 
     // Penilaian Kinerja Routes (Read-only for all, Full for Admin/Kanit/Kabid)

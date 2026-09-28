@@ -32,7 +32,19 @@
                     <label class="btn btn-outline-primary mb-0" data-bs-toggle="modal" data-bs-target="#skImportModal" title="Import Excel" style="cursor: pointer;">
                         <i class="bi bi-upload"></i>
                     </label>
-                    <a href="{{ route('data-sk.create') }}" class="btn btn-primary" title="Tambah">
+                    <div class="dropdown me-2">
+                                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownPembaruanSk" data-bs-toggle="dropdown" aria-expanded="false" title="Pembaruan SK">
+                                    <i class="bi bi-arrow-repeat"></i>
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownPembaruanSk">
+                                    <li>
+                                        <a class="dropdown-item" href="{{ route('data-sk.pembaruan') }}">
+                                            <i class="bi bi-calendar-check me-2"></i> Pembaruan SK
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                            <a href="{{ route('data-sk.create') }}" class="btn btn-primary" title="Tambah">
                         <i class="bi bi-plus-circle"></i>
                     </a>
                 </div>
@@ -65,7 +77,7 @@
                     <td>{{ $sk->gelar ?: '-' }}</td>
                     <td>{{ $sk->status_kepegawaian ?: '-' }}</td>
                     <td>{{ $sk->unit_kerja ?: '-' }}</td>
-                    <td>{{ $sk->tmt ?: '-' }}</td>
+                    <td>{{ optional($sk->tmt)->format('d-m-Y') ?: '-' }}</td>
                     <td>
                         <a href="{{ route('data-sk.show', $sk->id) }}" class="btn btn-sm btn-info">
                             <i class="bi bi-eye"></i>

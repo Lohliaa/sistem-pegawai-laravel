@@ -28,6 +28,7 @@ class DataSk extends Model
 
     protected $casts = [
         'tanggal_lahir' => 'date',
+        'tmt' => 'date',
         'tgl_mulai' => 'date',
         'tanggal_akhir' => 'date',
         'tanggal_ditetapkan' => 'date',
