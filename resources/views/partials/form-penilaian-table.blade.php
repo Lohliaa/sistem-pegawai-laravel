@@ -264,7 +264,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const elNilaiKeseluruhan = document.getElementById('nilai-keseluruhan');
         if (elNilaiKeseluruhan) {
             // Nilai Keseluruhan = ((Total Kompetensi + Total Komitmen + Total Kinerja) / pembagi) * 100
-            let pembagi = ('{{ $kategori }}' === 'cs') ? 6.52 : 7.36;
+            let pembagi = ('{{ $kategori }}' === 'pegawai') ? 6.94 : (('{{ $kategori }}' === 'cs') ? 6.52 : 7.36);
             elNilaiKeseluruhan.textContent = formatAngka((totalSeluruhAspek / pembagi) * 100);
         }
     }

@@ -650,7 +650,7 @@ class PenilaianKinerja extends Model
 
         // 5. NILAI KESELURUHAN (0-100)
         // Nilai Keseluruhan = ((Total Kompetensi + Total Komitmen + Total Kinerja) / pembagi) * 100
-        $pembagi = ($kategori === 'cs') ? 6.52 : 7.36;
+        $pembagi = ($kategori === 'pegawai') ? 6.94 : (($kategori === 'cs') ? 6.52 : 7.36);
         $nilaiKeseluruhan = ($totalSeluruhAspek / $pembagi) * 100;
 
         return [
