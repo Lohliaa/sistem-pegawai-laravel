@@ -264,7 +264,14 @@ document.addEventListener('DOMContentLoaded', function () {
         const elNilaiKeseluruhan = document.getElementById('nilai-keseluruhan');
         if (elNilaiKeseluruhan) {
             // Nilai Keseluruhan = ((Total Kompetensi + Total Komitmen + Total Kinerja) / pembagi) * 100
-            let pembagi = ('{{ $kategori }}' === 'pegawai') ? 6.94 : (('{{ $kategori }}' === 'cs') ? 6.52 : 7.36);
+            const kat = '{{ $kategori }}';
+            const kategori694 = ['pegawai', 'guru-alquran', 'guru-non-alquran', 'wali-kelas-reguler', 'koordinator-jenjang'];
+            let pembagi = 7.36;
+            if (kategori694.includes(kat)) {
+                pembagi = 6.94;
+            } else if (kat === 'cs') {
+                pembagi = 6.52;
+            }
             elNilaiKeseluruhan.textContent = formatAngka((totalSeluruhAspek / pembagi) * 100);
         }
     }
