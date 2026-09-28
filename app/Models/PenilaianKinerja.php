@@ -649,8 +649,9 @@ class PenilaianKinerja extends Model
         $totalSeluruhAspek = $totalKompetensi + $totalKomitmen + $totalKinerja;
 
         // 5. NILAI KESELURUHAN (0-100)
-        // Nilai Keseluruhan = ((Total Kompetensi + Total Komitmen + Total Kinerja) / 7.36) * 100
-        $nilaiKeseluruhan = ($totalSeluruhAspek / 7.36) * 100;
+        // Nilai Keseluruhan = ((Total Kompetensi + Total Komitmen + Total Kinerja) / pembagi) * 100
+        $pembagi = ($kategori === 'cs') ? 6.52 : 7.36;
+        $nilaiKeseluruhan = ($totalSeluruhAspek / $pembagi) * 100;
 
         return [
             'total_kompetensi' => round($totalKompetensi, 2),
