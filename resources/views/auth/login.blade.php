@@ -47,11 +47,6 @@
 
                         <button type="submit" class="btn btn-primary w-100">Login</button>
                     </form>
-
-                    <hr>
-                    <small class="text-muted">
-                        Demo: admin/admin123, staf/staf123, kanit/kanit123, kabid/kabid123
-                    </small>
                 </div>
             </div>
         </div>
