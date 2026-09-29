@@ -166,7 +166,7 @@ document.addEventListener('DOMContentLoaded', function () {
         let currentSubSection = '';
         let kompetensiItems = {};
         let komitmenSubItems = {keislaman: [], pengembangan_diri: [], kedisiplinan: []};
-        let kinerjaSubItems = {okr_individu: [], kerja_harian: []};
+        let kinerjaSubItems = {okr_individu: [], kerja_harian: [], okr_unit_bidang: []};
 
         items.forEach(function (row) {
             const type = row.type || '';
@@ -196,7 +196,12 @@ document.addEventListener('DOMContentLoaded', function () {
             } else if (currentSection === 'komitmen') {
                 if (komitmenSubItems.hasOwnProperty(currentSubSection)) komitmenSubItems[currentSubSection].push(n);
             } else if (currentSection === 'kinerja') {
-                if (kinerjaSubItems.hasOwnProperty(key)) kinerjaSubItems[key].push(n);
+                if (kinerjaSubItems.hasOwnProperty(key)) {
+                    kinerjaSubItems[key].push(n);
+                } else if (key === 'okr_unit_bidang') {
+                    if (!kinerjaSubItems.hasOwnProperty('okr_unit_bidang')) kinerjaSubItems['okr_unit_bidang'] = [];
+                    kinerjaSubItems['okr_unit_bidang'].push(n);
+                }
             }
         });
 
@@ -223,10 +228,21 @@ document.addEventListener('DOMContentLoaded', function () {
         let totalKomitmen = 0.35 * nilaiKomitmen;
 
         // 3. KINERJA (40%)
-        const kinW = {okr_individu: 0.65, kerja_harian: 0.35};
+        let totalKinerja = 0;
         let okrAvg = kinerjaSubItems.okr_individu.length > 0 ? kinerjaSubItems.okr_individu.reduce(function(a, b) { return a + b; }, 0) / kinerjaSubItems.okr_individu.length : 0;
         let kerjaAvg = kinerjaSubItems.kerja_harian.length > 0 ? kinerjaSubItems.kerja_harian.reduce(function(a, b) { return a + b; }, 0) / kinerjaSubItems.kerja_harian.length : 0;
-        let totalKinerja = 0.40 * (okrAvg * kinW.okr_individu + kerjaAvg * kinW.kerja_harian);
+
+        if ('{{ $kategori }}' === 'leader') {
+            const okrUnitValues = kinerjaSubItems.okr_unit_bidang || [];
+            let okrUnitAvg = okrUnitValues.length > 0
+                ? okrUnitValues.reduce(function(a, b) { return a + b; }, 0) / okrUnitValues.length
+                : 0;
+            let kinerjaInternal = (okrAvg * 0.30) + (kerjaAvg * 0.30) + (okrUnitAvg * 0.40);
+            totalKinerja = kinerjaInternal * 0.40;
+        } else {
+            const kinW = {okr_individu: 0.65, kerja_harian: 0.35};
+            totalKinerja = 0.40 * (okrAvg * kinW.okr_individu + kerjaAvg * kinW.kerja_harian);
+        }
 
         let totalSeluruhAspek = totalKompetensi + totalKomitmen + totalKinerja;
         

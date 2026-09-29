@@ -572,7 +572,7 @@ class PenilaianKinerja extends Model
     {
         $kompetensiItems = [];
         $komitmenSubItems = ['keislaman' => [], 'pengembangan_diri' => [], 'kedisiplinan' => []];
-        $kinerjaSubItems = ['okr_individu' => [], 'kerja_harian' => []];
+        $kinerjaSubItems = ['okr_individu' => [], 'kerja_harian' => [], 'okr_unit_bidang' => []];
 
         $currentSection = '';
         $currentSubSection = '';
@@ -639,11 +639,22 @@ class PenilaianKinerja extends Model
         $totalKomitmen = 0.35 * $nilaiKomitmen;
 
         // 3. KINERJA (40%)
-        // Subaspek: OKR Individu (65%), Kerja Harian (35%)
-        $kinerjaWeights = self::getSubAspectWeights('kinerja');
-        $okrVal = count($kinerjaSubItems['okr_individu']) > 0 ? array_sum($kinerjaSubItems['okr_individu']) / count($kinerjaSubItems['okr_individu']) : 0;
-        $kerjaVal = count($kinerjaSubItems['kerja_harian']) > 0 ? array_sum($kinerjaSubItems['kerja_harian']) / count($kinerjaSubItems['kerja_harian']) : 0;
-        $totalKinerja = 0.40 * (($okrVal * ($kinerjaWeights['okr_individu'] ?? 0.65)) + ($kerjaVal * ($kinerjaWeights['kerja_harian'] ?? 0.35)));
+        if ($kategori === 'leader') {
+            $okrValues = $kinerjaSubItems['okr_individu'] ?? [];
+            $kerjaValues = $kinerjaSubItems['kerja_harian'] ?? [];
+            $okrUnitValues = $kinerjaSubItems['okr_unit_bidang'] ?? [];
+
+            $okrVal = count($okrValues) > 0 ? array_sum($okrValues) / count($okrValues) : 0;
+            $kerjaVal = count($kerjaValues) > 0 ? array_sum($kerjaValues) / count($kerjaValues) : 0;
+            $okrUnitVal = count($okrUnitValues) > 0 ? array_sum($okrUnitValues) / count($okrUnitValues) : 0;
+
+            $totalKinerja = (($okrVal * 0.30) + ($kerjaVal * 0.30) + ($okrUnitVal * 0.40)) * 0.40;
+        } else {
+            $kinerjaWeights = self::getSubAspectWeights('kinerja');
+            $okrVal = count($kinerjaSubItems['okr_individu']) > 0 ? array_sum($kinerjaSubItems['okr_individu']) / count($kinerjaSubItems['okr_individu']) : 0;
+            $kerjaVal = count($kinerjaSubItems['kerja_harian']) > 0 ? array_sum($kinerjaSubItems['kerja_harian']) / count($kinerjaSubItems['kerja_harian']) : 0;
+            $totalKinerja = 0.40 * (($okrVal * ($kinerjaWeights['okr_individu'] ?? 0.65)) + ($kerjaVal * ($kinerjaWeights['kerja_harian'] ?? 0.35)));
+        }
 
         // 4. TOTAL NILAI SELURUH ASPEK (0-4)
         $totalSeluruhAspek = $totalKompetensi + $totalKomitmen + $totalKinerja;
