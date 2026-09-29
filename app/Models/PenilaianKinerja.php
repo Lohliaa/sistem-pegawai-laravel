@@ -650,10 +650,11 @@ class PenilaianKinerja extends Model
 
         // 5. NILAI KESELURUHAN (0-100)
         // Nilai Keseluruhan = ((Total Kompetensi + Total Komitmen + Total Kinerja) / pembagi) * 100
+        $kategori652 = ['cs', 'musyrifah'];
         $kategori694 = ['pegawai', 'guru-alquran', 'guru-non-alquran', 'wali-kelas-reguler', 'koordinator-jenjang'];
         if (in_array($kategori, $kategori694)) {
             $pembagi = 6.94;
-        } elseif ($kategori === 'cs') {
+        } elseif (in_array($kategori, $kategori652)) {
             $pembagi = 6.52;
         } elseif ($kategori === 'koordinator-alquran') {
             $pembagi = 7.36;

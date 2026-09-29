@@ -265,11 +265,12 @@ document.addEventListener('DOMContentLoaded', function () {
         if (elNilaiKeseluruhan) {
             // Nilai Keseluruhan = ((Total Kompetensi + Total Komitmen + Total Kinerja) / pembagi) * 100
             const kat = '{{ $kategori }}';
+            const kategori652 = ['cs', 'musyrifah'];
             const kategori694 = ['pegawai', 'guru-alquran', 'guru-non-alquran', 'wali-kelas-reguler', 'koordinator-jenjang'];
             let pembagi = 7.36;
             if (kategori694.includes(kat)) {
                 pembagi = 6.94;
-            } else if (kat === 'cs') {
+            } else if (kategori652.includes(kat)) {
                 pembagi = 6.52;
             } else if (kat === 'koordinator-alquran') {
                 pembagi = 7.36;
