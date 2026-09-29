@@ -227,13 +227,13 @@ class PengajuanController extends Controller
 
     public function destroy(Pengajuan $pengajuan)
     {
-        // Only allow delete if status is pending and user is creator
-        if ($pengajuan->status == 'pending' && $pengajuan->created_by == Auth::id()) {
+        // Allow delete if (user is creator or admin)
+        if ($pengajuan->created_by == Auth::id() || Auth::user()->role == 'admin') {
             $pengajuan->delete();
             return redirect()->route('pengajuan.index')->with('success', 'Pengajuan berhasil dihapus!');
         }
 
-        return back()->with('error', 'Tidak dapat menghapus pengajuan ini!');
+        return back()->with('error', 'Anda tidak memiliki hak untuk menghapus pengajuan ini!');
     }
 
     public function approve(Request $request, Pengajuan $pengajuan)

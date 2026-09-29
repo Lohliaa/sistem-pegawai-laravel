@@ -94,7 +94,7 @@
                         <a href="{{ route('pengajuan.show', $p->id) }}" class="btn btn-sm btn-info">
                             <i class="bi bi-eye"></i> Detail
                         </a>
-                        @if((auth()->user()->role == 'staf' && $p->status == 'pending' && $p->created_by == auth()->id()) || auth()->user()->role == 'admin')
+                        @if(auth()->user()->role == 'admin' || (auth()->user()->role == 'staf' && $p->created_by == auth()->id()))
                         <form action="{{ route('pengajuan.destroy', $p->id) }}" method="POST" class="d-inline">
                             @csrf
                             @method('DELETE')
