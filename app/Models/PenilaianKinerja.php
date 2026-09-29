@@ -67,12 +67,7 @@ class PenilaianKinerja extends Model
             ['type' => 'item', 'key' => 'pelatihan', 'uraian' => 'Mengikuti pelatihan/pembekalan (diselenggarakan lembaga maupun ikut mandiri)'],
 
             ['type' => 'section', 'label' => 'III. KINERJA (40%)'],
-            ['type' => 'item', 'key' => 'okr_individu', 'uraian' => 'Capaian OKR Individu', 'sub' => [
-                ['uraian' => 'Melaksanakan Jobdes'],
-                ['uraian' => 'Pendampingan akhlak siswa'],
-                ['uraian' => 'Pendampingan sholat siswa'],
-                ['uraian' => 'Pendampingan wudhu'],
-            ]],
+            ['type' => 'item', 'key' => 'okr_individu', 'uraian' => 'Capaian OKR Individu'],
             ['type' => 'item', 'key' => 'kerja_harian', 'uraian' => 'Capaian Kerja Harian'],
         ],
         'guru-alquran' => [
@@ -107,12 +102,7 @@ class PenilaianKinerja extends Model
             ['type' => 'item', 'key' => 'pelatihan', 'uraian' => 'Mengikuti pelatihan/pembekalan (diselenggarakan lembaga maupun ikut mandiri)'],
 
             ['type' => 'section', 'label' => 'III. KINERJA (40%)'],
-            ['type' => 'item', 'key' => 'okr_individu', 'uraian' => 'Capaian OKR Individu', 'sub' => [
-                ['uraian' => 'Melaksanakan Jobdes'],
-                ['uraian' => 'Pendampingan akhlak siswa'],
-                ['uraian' => 'Pendampingan sholat siswa'],
-                ['uraian' => 'Pendampingan wudhu'],
-            ]],
+            ['type' => 'item', 'key' => 'okr_individu', 'uraian' => 'Capaian OKR Individu'],
             ['type' => 'item', 'key' => 'kerja_harian', 'uraian' => 'Capaian Kerja Harian'],
         ],
         'guru-non-alquran' => [
@@ -147,12 +137,7 @@ class PenilaianKinerja extends Model
             ['type' => 'item', 'key' => 'pelatihan', 'uraian' => 'Mengikuti pelatihan/pembekalan (diselenggarakan lembaga maupun ikut mandiri)'],
 
             ['type' => 'section', 'label' => 'III. KINERJA (40%)'],
-            ['type' => 'item', 'key' => 'okr_individu', 'uraian' => 'Capaian OKR Individu', 'sub' => [
-                ['uraian' => 'Melaksanakan Jobdes'],
-                ['uraian' => 'Pendampingan akhlak siswa'],
-                ['uraian' => 'Pendampingan sholat siswa'],
-                ['uraian' => 'Pendampingan wudhu'],
-            ]],
+            ['type' => 'item', 'key' => 'okr_individu', 'uraian' => 'Capaian OKR Individu'],
             ['type' => 'item', 'key' => 'kerja_harian', 'uraian' => 'Capaian Kerja Harian'],
         ],
         'leader' => [
@@ -187,12 +172,7 @@ class PenilaianKinerja extends Model
             ['type' => 'item', 'key' => 'melaksanakan_coaching', 'uraian' => 'Melaksanakan coaching'],
 
             ['type' => 'section', 'label' => 'III. KINERJA (40%)'],
-            ['type' => 'item', 'key' => 'okr_individu', 'uraian' => 'Capaian OKR Individu', 'sub' => [
-                ['uraian' => 'Melaksanakan Jobdes'],
-                ['uraian' => 'Pendampingan akhlak siswa'],
-                ['uraian' => 'Pendampingan sholat siswa'],
-                ['uraian' => 'Pendampingan wudhu'],
-            ]],
+            ['type' => 'item', 'key' => 'okr_individu', 'uraian' => 'Capaian OKR Individu'],
             ['type' => 'item', 'key' => 'kerja_harian', 'uraian' => 'Capaian Kerja Harian'],
             ['type' => 'item', 'key' => 'okr_unit_bidang', 'uraian' => 'Capaian OKR unit/bidang'],
         ],
@@ -225,11 +205,7 @@ class PenilaianKinerja extends Model
             ['type' => 'item', 'key' => 'pelatihan', 'uraian' => 'Mengikuti pelatihan/pembekalan (diselenggarakan lembaga maupun ikut mandiri)'],
 
             ['type' => 'section', 'label' => 'III. KINERJA (40%)'],
-            ['type' => 'item', 'key' => 'okr_individu', 'uraian' => 'Capaian OKR Individu', 'sub' => [
-                ['uraian' => 'Melaksanakan Jobdes'],
-                ['uraian' => 'Pendampingan akhlak santri'],
-                ['uraian' => 'Pendampingan sholat santri'],
-            ]],
+            ['type' => 'item', 'key' => 'okr_individu', 'uraian' => 'Capaian OKR Individu'],
             ['type' => 'item', 'key' => 'kerja_harian', 'uraian' => 'Capaian Kerja Harian'],
         ],
 
@@ -265,12 +241,7 @@ class PenilaianKinerja extends Model
             ['type' => 'item', 'key' => 'pelatihan', 'uraian' => 'Mengikuti pelatihan/pembekalan (diselenggarakan lembaga maupun ikut mandiri)'],
 
             ['type' => 'section', 'label' => 'III. KINERJA (40%)'],
-            ['type' => 'item', 'key' => 'okr_individu', 'uraian' => 'Capaian OKR Individu', 'sub' => [
-                ['uraian' => 'Melaksanakan Jobdes'],
-                ['uraian' => 'Pendampingan akhlak siswa'],
-                ['uraian' => 'Pendampingan sholat siswa'],
-                ['uraian' => 'Pendampingan wudhu'],
-            ]],
+            ['type' => 'item', 'key' => 'okr_individu', 'uraian' => 'Capaian OKR Individu'],
             ['type' => 'item', 'key' => 'kerja_harian', 'uraian' => 'Capaian Kerja Harian'],
         ],
 
@@ -306,12 +277,7 @@ class PenilaianKinerja extends Model
             ['type' => 'item', 'key' => 'melaksanakan_coaching', 'uraian' => '4. Melaksanakan coaching'],
 
             ['type' => 'section', 'label' => 'III. KINERJA (40%)'],
-            ['type' => 'item', 'key' => 'okr_individu', 'uraian' => '1. Capaian OKR Individu', 'sub' => [
-                ['uraian' => 'a. Melaksanakan Jobdes'],
-                ['uraian' => 'b. Pendampingan akhlak siswa'],
-                ['uraian' => 'c. Pendampingan sholat siswa'],
-                ['uraian' => 'd. Pendampingan wudhu'],
-            ]],
+            ['type' => 'item', 'key' => 'okr_individu', 'uraian' => '1. Capaian OKR Individu'],
             ['type' => 'item', 'key' => 'kerja_harian', 'uraian' => '2. Capaian Kerja Harian'],
         ],
 
@@ -348,12 +314,7 @@ class PenilaianKinerja extends Model
             ['type' => 'item', 'key' => 'pelatihan', 'uraian' => 'Mengikuti pelatihan/pembekalan (diselenggarakan lembaga maupun ikut mandiri)'],
 
             ['type' => 'section', 'label' => 'III. KINERJA (40%)'],
-            ['type' => 'item', 'key' => 'okr_individu', 'uraian' => 'Capaian OKR Individu', 'sub' => [
-                ['uraian' => 'Melaksanakan Jobdes'],
-                ['uraian' => 'Pendampingan akhlak siswa'],
-                ['uraian' => 'Pendampingan sholat siswa'],
-                ['uraian' => 'Pendampingan wudhu'],
-            ]],
+            ['type' => 'item', 'key' => 'okr_individu', 'uraian' => 'Capaian OKR Individu'],
             ['type' => 'item', 'key' => 'kerja_harian', 'uraian' => 'Capaian Kerja Harian'],
         ],
         'cs' => [
@@ -385,12 +346,7 @@ class PenilaianKinerja extends Model
             ['type' => 'item', 'key' => 'membaca_buku', 'uraian' => 'Membaca buku'],
 
             ['type' => 'section', 'label' => 'III. KINERJA (40%)'],
-            ['type' => 'item', 'key' => 'okr_individu', 'uraian' => 'Capaian OKR Individu', 'sub' => [
-                ['uraian' => 'Melaksanakan Jobdes'],
-                ['uraian' => 'Pendampingan akhlak siswa'],
-                ['uraian' => 'Pendampingan sholat siswa'],
-                ['uraian' => 'Pendampingan wudhu'],
-            ]],
+            ['type' => 'item', 'key' => 'okr_individu', 'uraian' => 'Capaian OKR Individu'],
             ['type' => 'item', 'key' => 'kerja_harian', 'uraian' => 'Capaian Kerja Harian'],
         ],
     ];
