@@ -134,6 +134,8 @@ class ProfilePegawaiController extends Controller
         return [
             'user_id' => ['nullable', 'integer', 'exists:users,id', Rule::unique('pegawai', 'user_id')->ignore($pegawai?->id)],
             'nama' => 'required|string|max:255',
+            'nik' => 'required|string|max:255',
+            'nomor_kk' => 'required|string|max:255',
             'tempat' => 'nullable|string|max:255',
             'tanggal_lahir' => 'nullable|date',
             'gender' => ['nullable', Rule::in(['L', 'P'])],
