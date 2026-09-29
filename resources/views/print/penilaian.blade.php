@@ -197,14 +197,16 @@
 
         <div class="row mt-5">
             <div class="col-6 text-center">
-                <p>Mengetahui,<br>Ketua Yayasan Permata Mojokerto,</p>
-                <br><br><br>
-                <p><strong>({{ $namaKetuaYayasan ?? '...................................' }})</strong></p>
+                <p class="mb-1">Mengetahui,<br>Ketua Yayasan Permata Mojokerto,</p>
+                <div class="d-flex justify-content-center align-items-center" style="height: 80px;">
+                    <img src="{{ asset('img/ttd.png') }}" alt="Tanda Tangan Ketua Yayasan" style="max-height: 140px; max-width: 180px; object-fit: contain;">
+                </div>
+                <p class="mt-1"><strong>({{ $namaKetuaYayasan ?? '...................................' }})</strong></p>
             </div>
             <div class="col-6 text-center">
-                <p>Kepala Bidang SDM,</p>
-                <br><br><br>
-                <p><strong>({{ $namaKabidSdm ?? '...................................' }})</strong></p>
+                <p class="mb-1">Kepala Bidang SDM,</p>
+                <div style="height: 80px;"></div>
+                <p class="mt-1"><strong>({{ $namaKabidSdm ?? '...................................' }})</strong></p>
             </div>
         </div>
     </div>
