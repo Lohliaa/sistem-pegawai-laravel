@@ -655,6 +655,8 @@ class PenilaianKinerja extends Model
             $pembagi = 6.94;
         } elseif ($kategori === 'cs') {
             $pembagi = 6.52;
+        } elseif ($kategori === 'koordinator-alquran') {
+            $pembagi = 7.36;
         } else {
             $pembagi = 7.36;
         }

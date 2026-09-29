@@ -271,6 +271,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 pembagi = 6.94;
             } else if (kat === 'cs') {
                 pembagi = 6.52;
+            } else if (kat === 'koordinator-alquran') {
+                pembagi = 7.36;
             }
             elNilaiKeseluruhan.textContent = formatAngka((totalSeluruhAspek / pembagi) * 100);
         }
