@@ -13,6 +13,42 @@
 </div>
 <hr>
 
+@if(auth()->user()->role == 'admin')
+<div class="card mb-3">
+    <div class="card-body">
+        <form action="{{ route('pengajuan.index') }}" method="GET" class="row g-2 align-items-end">
+            <div class="col-md-3">
+                <label class="form-label">Nama</label>
+                <input type="text" name="nama" class="form-control" value="{{ $filters['nama'] ?? '' }}">
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Unit</label>
+                <select name="unit" class="form-select">
+                    <option value="">-- Semua Unit --</option>
+                    @foreach($units as $unit)
+                        <option value="{{ $unit }}" @selected(($filters['unit'] ?? '') == $unit)>{{ $unit }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">Status</label>
+                <select name="status" class="form-select">
+                    <option value="">-- Semua Status --</option>
+                    @foreach($statuses as $key => $label)
+                        <option value="{{ $key }}" @selected(($filters['status'] ?? '') == $key)>{{ $label }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="col-auto">
+                <button type="submit" class="btn btn-primary" title="Filter"><i class="bi bi-search"></i></button>
+                <a href="{{ route('pengajuan.index') }}" class="btn btn-secondary" title="Reset"><i class="bi bi-arrow-clockwise"></i></a>
+                <a href="{{ route('pengajuan.export', $filters) }}" class="btn btn-success" title="Download Excel"><i class="bi bi-file-earmark-excel"></i></a>
+            </div>
+        </form>
+    </div>
+</div>
+@endif
+
 <div class="card">
     <div class="card-body">
         <table class="table table-striped">
@@ -58,7 +94,7 @@
                         <a href="{{ route('pengajuan.show', $p->id) }}" class="btn btn-sm btn-info">
                             <i class="bi bi-eye"></i> Detail
                         </a>
-                        @if(auth()->user()->role == 'staf' && $p->status == 'pending' && $p->created_by == auth()->id())
+                        @if((auth()->user()->role == 'staf' && $p->status == 'pending' && $p->created_by == auth()->id()) || auth()->user()->role == 'admin')
                         <form action="{{ route('pengajuan.destroy', $p->id) }}" method="POST" class="d-inline">
                             @csrf
                             @method('DELETE')
@@ -71,12 +107,11 @@
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="8" class="text-center">Tidak ada data pengajuan</td>
+                    <td colspan="{{ auth()->user()->role == 'admin' ? 9 : 8 }}" class="text-center">Tidak ada data pengajuan</td>
                 </tr>
                 @endforelse
             </tbody>
         </table>
     </div>
 </div>
-
 @endsection

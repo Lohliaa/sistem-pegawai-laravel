@@ -47,6 +47,7 @@ Route::middleware('auth')->group(function () {
     Route::middleware('role:admin')->group(function () {
         Route::post('/pengajuan/{pengajuan}/process', [PengajuanController::class, 'processAdmin'])->name('pengajuan.process');
         Route::post('/pengajuan/{pengajuan}/complete', [PengajuanController::class, 'completeAdmin'])->name('pengajuan.complete');
+        Route::get('/pengajuan-export', [PengajuanController::class, 'export'])->name('pengajuan.export');
     });
 
     Route::delete('/pengajuan/{pengajuan}', [PengajuanController::class, 'destroy'])->name('pengajuan.destroy');

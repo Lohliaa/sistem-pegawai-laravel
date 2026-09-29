@@ -45,7 +45,7 @@ class PengajuanController extends Controller
         return true;
     }
 
-    public function index()
+    public function index(Request $request)
     {
         $user = Auth::user();
         
@@ -70,10 +70,80 @@ class PengajuanController extends Controller
                 }
             }
         } else {
-            $pengajuan = Pengajuan::with('creator')->latest()->get();
+            $query = Pengajuan::with('creator');
+
+            if ($request->filled('nama')) {
+                $query->where('nama', 'like', '%' . $request->input('nama') . '%');
+            }
+            if ($request->filled('unit')) {
+                $query->where('unit', $request->input('unit'));
+            }
+            if ($request->filled('status')) {
+                $query->where('status', $request->input('status'));
+            }
+
+            $pengajuan = $query->latest()->get();
         }
 
-        return view('pengajuan.index', compact('pengajuan'));
+        $units = Pengajuan::distinct()->pluck('unit')->filter()->values();
+        $statuses = [
+            'pending' => 'Pending',
+            'approved_kanit' => 'Approved Kanit',
+            'approved_kabid' => 'Approved Kabid',
+            'rejected' => 'Ditolak'
+        ];
+        $filters = $request->only(['nama', 'unit', 'status']);
+
+        return view('pengajuan.index', compact('pengajuan', 'units', 'statuses', 'filters'));
+    }
+
+    public function export(Request $request)
+    {
+        $user = Auth::user();
+        if ($user->role !== 'admin') {
+            abort(403);
+        }
+
+        $query = Pengajuan::with('creator');
+
+        if ($request->filled('nama')) {
+            $query->where('nama', 'like', '%' . $request->input('nama') . '%');
+        }
+        if ($request->filled('unit')) {
+            $query->where('unit', $request->input('unit'));
+        }
+        if ($request->filled('status')) {
+            $query->where('status', $request->input('status'));
+        }
+
+        $pengajuanList = $query->latest()->get();
+
+        $headings = ['No', 'Tipe', 'Nama', 'Unit', 'Pimpinan Atasan', 'TMT', 'Status', 'Dibuat Oleh', 'Keterangan'];
+        $rows = [];
+
+        foreach ($pengajuanList as $index => $p) {
+            $statusLabel = match($p->status) {
+                'pending' => 'Pending',
+                'approved_kanit' => 'Approved Kanit',
+                'approved_kabid' => 'Approved Kabid',
+                default => 'Ditolak'
+            };
+
+            $rows[] = [
+                $index + 1,
+                $p->tipe_pengajuan,
+                $p->nama,
+                $p->unit,
+                $p->pimpinan_atasan,
+                $p->tanggal_tmt ? $p->tanggal_tmt->format('d/m/Y') : '-',
+                $statusLabel,
+                $p->creator->username ?? '-',
+                $p->keterangan ?? '-',
+            ];
+        }
+
+        $spreadsheet = \App\Support\ExcelHelper::spreadsheet($headings, $rows, 'Data Pengajuan');
+        return \App\Support\ExcelHelper::download($spreadsheet, 'data-pengajuan.xlsx');
     }
 
     public function create()
