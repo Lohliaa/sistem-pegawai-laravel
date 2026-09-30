@@ -27,8 +27,10 @@
                     <th>Kuartal</th>
                     <th>Periode Bulan</th>
                     <th width="100">Tahun</th>
+                    @if(in_array(auth()->user()->role, ['admin', 'kabid', 'kanit']))
                     <th width="120">Jml Penilaian</th>
                     <th width="200">Aksi</th>
+                    @endif
                 </tr>
             </thead>
             <tbody>
@@ -38,12 +40,12 @@
                     <td><span class="badge bg-primary">{{ $periode->nama_kuartal }}</span></td>
                     <td>{{ $periode->periode_bulan }}</td>
                     <td>{{ $periode->tahun }}</td>
+                    @if(in_array(auth()->user()->role, ['admin', 'kabid', 'kanit']))
                     <td>{{ $periode->penilaian_count }}</td>
                     <td>
                         <a href="{{ route('kinerja-periode.show', $periode->id) }}" class="btn btn-sm btn-info" title="Detail">
                             <i class="bi bi-eye"></i>
                         </a>
-                        @if(auth()->user()->role !== 'staf')
                         <a href="{{ route('kinerja-periode.edit', $periode->id) }}" class="btn btn-sm btn-warning" title="Edit">
                             <i class="bi bi-pencil"></i>
                         </a>
@@ -55,12 +57,12 @@
                                 <i class="bi bi-trash"></i>
                             </button>
                         </form>
-                        @endif
                     </td>
+                    @endif
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="6" class="text-center">Belum ada periode penilaian</td>
+                    <td colspan="{{ in_array(auth()->user()->role, ['admin', 'kabid', 'kanit']) ? 6 : 4 }}" class="text-center">Belum ada periode penilaian</td>
                 </tr>
                 @endforelse
             </tbody>
