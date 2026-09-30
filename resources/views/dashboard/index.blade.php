@@ -55,7 +55,7 @@
                         </div>
                         <div class="tab-pane fade" id="dp-dokumen">
                             <div class="row">
-                                <div class="col-6"><strong>KTP:</strong> @if($identity->dokumen_ktp)<a href="{{ asset('storage/'.$identity->dokumen_ktp) }}" target="_blank">Lihat</a>@else - @endif</div>
+                                <div class="col-6"><strong>MoU:</strong> @if($identity->dokumen_mou)<a href="{{ asset('storage/'.$identity->dokumen_mou) }}" target="_blank">Lihat</a>@else - @endif</div>
                                 <div class="col-6"><strong>SK:</strong> @if($identity->dokumen_sk)<a href="{{ asset('storage/'.$identity->dokumen_sk) }}" target="_blank">Lihat</a>@else - @endif</div>
                             </div>
                         </div>
