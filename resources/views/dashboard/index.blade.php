@@ -189,7 +189,9 @@
         </div>
     </div>
 @endif
-    @include('dashboard.partials.pegawai-statistik', ['data' => $data])
 
+@if(in_array($role, ['admin', 'kabid', 'kanit']))
+    @include('dashboard.partials.pegawai-statistik', ['data' => $data])
+@endif
 
 @endsection
