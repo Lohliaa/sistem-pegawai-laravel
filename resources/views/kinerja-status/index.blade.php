@@ -25,8 +25,10 @@
                 <tr>
                     <th width="60">No</th>
                     <th>Nama Status</th>
+                    @if(in_array(auth()->user()->role, ['admin', 'kabid', 'kanit']))
                     <th width="180">Dibuat</th>
-                    <th width="{{ auth()->user()->role !== 'staf' ? '200' : '80' }}">Aksi</th>
+                    <th width="200">Aksi</th>
+                    @endif
                 </tr>
             </thead>
             <tbody>
@@ -34,12 +36,12 @@
                 <tr>
                     <td>{{ $statuses->firstItem() + $index }}</td>
                     <td>{{ $status->nama_status }}</td>
+                    @if(in_array(auth()->user()->role, ['admin', 'kabid', 'kanit']))
                     <td>{{ $status->created_at?->format('d/m/Y H:i') ?? '-' }}</td>
                     <td>
                         <a href="{{ route('kinerja-status.show', $status->id) }}" class="btn btn-sm btn-info">
                             <i class="bi bi-eye"></i>
                         </a>
-                        @if(auth()->user()->role !== 'staf')
                         <a href="{{ route('kinerja-status.edit', $status->id) }}" class="btn btn-sm btn-warning">
                             <i class="bi bi-pencil"></i>
                         </a>
@@ -50,12 +52,12 @@
                                 <i class="bi bi-trash"></i>
                             </button>
                         </form>
-                        @endif
                     </td>
+                    @endif
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="4" class="text-center">Belum ada data status kepegawaian</td>
+                    <td colspan="{{ in_array(auth()->user()->role, ['admin', 'kabid', 'kanit']) ? 4 : 2 }}" class="text-center">Belum ada data status kepegawaian</td>
                 </tr>
                 @endforelse
             </tbody>
