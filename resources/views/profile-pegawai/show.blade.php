@@ -4,14 +4,19 @@
 
 @section('content')
 <div class="d-flex justify-content-between align-items-center mb-3">
-    <h3 class="mb-0"><i class="bi bi-eye"></i> Detail Pegawai</h3>
     <div>
-        <a href="{{ route('profile-pegawai.edit', $pegawai->id) }}" class="btn btn-warning">
-            <i class="bi bi-pencil"></i> Edit
-        </a>
-        <a href="{{ route('profile-pegawai.index') }}" class="btn btn-secondary">
-            <i class="bi bi-arrow-left"></i> Kembali
-        </a>
+        @if(auth()->user()->role === 'admin')
+            <a href="{{ route('profile-pegawai.edit', $pegawai->id) }}" class="btn btn-warning">
+                <i class="bi bi-pencil"></i> Edit
+            </a>
+            <a href="{{ route('profile-pegawai.index') }}" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i> Kembali
+            </a>
+        @else
+            <a href="{{ route('dashboard') }}" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i> Kembali ke Dashboard
+            </a>
+        @endif
     </div>
 </div>
 <hr>
@@ -40,6 +45,10 @@
             </div>
             <div class="card-body p-0">
                 <table class="table mb-0">
+                    <tr>
+                        <th width="150" class="ps-3">User ID</th>
+                        <td>{{ $pegawai->user_id ?? '-' }}</td>
+                    </tr>
                     <tr>
                         <th width="150" class="ps-3">Username</th>
                         <td>{{ $pegawai->user?->username ?? '-' }}</td>
@@ -135,6 +144,7 @@
                         <th class="ps-3">Tanggal TMT</th>
                         <td>{{ $pegawai->tanggal_tmt ? $pegawai->tanggal_tmt->format('d/m/Y') : '-' }}</td>
                     </tr>
+
                     <tr>
                         <th class="ps-3">Golongan/Ruang</th>
                         <td>{{ $pegawai->golongan_ruang ?? '-' }}</td>
@@ -150,6 +160,15 @@
                     <tr>
                         <th class="ps-3">Tanggal SK</th>
                         <td>{{ $pegawai->tanggal_sk ? $pegawai->tanggal_sk->format('d/m/Y') : '-' }}</td>
+                    </tr>
+                    <tr>
+                        <th class="ps-3">Masa Kerja</th>
+                        <td>{{ $pegawai->masa_kerja ?? '-' }}</td>
+                    </tr>
+                    <tr>
+                        <th class="ps-3">Status Aktif</th>
+                        <td>{{ $pegawai->status_aktif ?? 'Aktif' }}</td>
+                    </tr>
         <!-- Pendidikan & Kompetensi -->
         <div class="card mb-4">
             <div class="card-header bg-info text-white">

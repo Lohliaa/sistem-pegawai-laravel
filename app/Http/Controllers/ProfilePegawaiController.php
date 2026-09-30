@@ -13,6 +13,21 @@ class ProfilePegawaiController extends Controller
 {
     public function index(Request $request)
     {
+        if (auth()->user()->role !== 'admin') {
+            $pegawai = Pegawai::with(['user', 'penilaian.periode', 'penilaian.pejabatPenilai', 'statusKepegawaian'])
+                ->where('user_id', auth()->id())
+                ->first();
+
+            if (!$pegawai) {
+                $pegawai = new Pegawai([
+                    'user_id' => auth()->id(),
+                    'nama' => auth()->user()->username,
+                ]);
+            }
+
+            return view('profile-pegawai.show', compact('pegawai'));
+        }
+
         $totalPegawai = Pegawai::count();
         $pegawaiPerUnit = Pegawai::select('unit', \Illuminate\Support\Facades\DB::raw('count(*) as total'))
             ->groupBy('unit')
@@ -83,6 +98,10 @@ class ProfilePegawaiController extends Controller
     public function show(string $id)
     {
         $pegawai = Pegawai::with(['user', 'penilaian.periode', 'penilaian.pejabatPenilai', 'statusKepegawaian'])->findOrFail($id);
+
+        if (auth()->user()->role !== 'admin' && $pegawai->user_id !== auth()->id()) {
+            abort(403, 'Unauthorized action.');
+        }
 
         return view('profile-pegawai.show', compact('pegawai'));
     }

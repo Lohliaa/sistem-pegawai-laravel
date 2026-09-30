@@ -58,10 +58,18 @@ Route::middleware('auth')->group(function () {
     Route::get('/pengajuan/{pengajuan}', [PengajuanController::class, 'show'])->name('pengajuan.show');
 
 
+    // Profile Pegawai (Accessible to all authenticated users)
+    Route::get('profile-pegawai', [ProfilePegawaiController::class, 'index'])->name('profile-pegawai.index');
+    Route::get('profile-pegawai/{profile_pegawai}', [ProfilePegawaiController::class, 'show'])->name('profile-pegawai.show');
+
     // Admin Only Routes
     Route::middleware('role:admin')->group(function () {
-        // Profile Pegawai
-        Route::resource('profile-pegawai', ProfilePegawaiController::class);
+        // Profile Pegawai Management
+        Route::get('profile-pegawai/create', [ProfilePegawaiController::class, 'create'])->name('profile-pegawai.create');
+        Route::post('profile-pegawai', [ProfilePegawaiController::class, 'store'])->name('profile-pegawai.store');
+        Route::get('profile-pegawai/{profile_pegawai}/edit', [ProfilePegawaiController::class, 'edit'])->name('profile-pegawai.edit');
+        Route::put('profile-pegawai/{profile_pegawai}', [ProfilePegawaiController::class, 'update'])->name('profile-pegawai.update');
+        Route::delete('profile-pegawai/{profile_pegawai}', [ProfilePegawaiController::class, 'destroy'])->name('profile-pegawai.destroy');
         Route::get('profile-pegawai/{id}/export', [ProfilePegawaiController::class, 'export'])->name('profile-pegawai.export');
         
         // Manajemen User

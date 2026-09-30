@@ -15,6 +15,9 @@
     <a href="{{ route('dashboard') }}" class="{{ request()->routeIs('dashboard') ? 'active' : '' }}">
         <i class="bi bi-house"></i> Dashboard
     </a>
+    <a href="{{ route('profile-pegawai.index') }}" class="{{ request()->routeIs('profile-pegawai.*') ? 'active' : '' }}">
+        <i class="bi bi-person-badge"></i> Profile Pegawai
+    </a>
 
     <!-- Pengajuan Menu -->
     <div class="section-title mt-3 mb-2" style="color: #95a5a6; font-size: 0.85rem; font-weight: bold; text-transform: uppercase;">Pengajuan</div>
@@ -39,9 +42,6 @@
     <!-- Admin Menu -->
     @if(auth()->user()->role == 'admin')
     <div class="section-title mt-3 mb-2" style="color: #95a5a6; font-size: 0.85rem; font-weight: bold; text-transform: uppercase;">Admin</div>
-    <a href="{{ route('profile-pegawai.index') }}" class="{{ request()->routeIs('profile-pegawai.*') ? 'active' : '' }}">
-        <i class="bi bi-person-badge"></i> Profile Pegawai
-    </a>
     <a href="{{ route('manajemen-user.index') }}" class="{{ request()->routeIs('manajemen-user.*') ? 'active' : '' }}">
         <i class="bi bi-people"></i> Manajemen User
     </a>
