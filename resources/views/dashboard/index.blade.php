@@ -140,29 +140,43 @@
 
 
 @elseif($role == 'staf')
-    <div class="row">
+    <div class="row g-3 mb-3">
         <div class="col-md-4">
-            <div class="card text-white bg-primary mb-3">
-                <div class="card-body">
-                    <h5 class="card-title">Pengajuan Saya</h5>
-                    <h2>{{ $data['my_pengajuan'] ?? 0 }}</h2>
-                    <a href="{{ route('pengajuan.index') }}" class="btn btn-light btn-sm mt-2">Lihat Semua</a>
+            <div class="card text-white bg-primary h-100">
+                <div class="card-body d-flex flex-column justify-content-between">
+                    <div>
+                        <h5 class="card-title">Pengajuan Saya</h5>
+                        <h2 class="mb-0">{{ $data['my_pengajuan'] ?? 0 }}</h2>
+                    </div>
+                    <div class="mt-3">
+                        <a href="{{ route('pengajuan.index') }}" class="btn btn-light btn-sm">Lihat Semua</a>
+                    </div>
                 </div>
             </div>
         </div>
         <div class="col-md-4">
-            <div class="card text-white bg-warning mb-3">
-                <div class="card-body">
-                    <h5 class="card-title">Pending</h5>
-                    <h2>{{ $data['pending'] ?? 0 }}</h2>
+            <div class="card text-white bg-warning h-100">
+                <div class="card-body d-flex flex-column justify-content-between">
+                    <div>
+                        <h5 class="card-title">Pending</h5>
+                        <h2 class="mb-0">{{ $data['pending'] ?? 0 }}</h2>
+                    </div>
+                    <div class="mt-3" style="visibility: hidden;">
+                        <span class="btn btn-light btn-sm">&nbsp;</span>
+                    </div>
                 </div>
             </div>
         </div>
         <div class="col-md-4">
-            <div class="card text-white bg-success mb-3">
-                <div class="card-body">
-                    <h5 class="card-title">Approved</h5>
-                    <h2>{{ $data['approved'] ?? 0 }}</h2>
+            <div class="card text-white bg-success h-100">
+                <div class="card-body d-flex flex-column justify-content-between">
+                    <div>
+                        <h5 class="card-title">Approved</h5>
+                        <h2 class="mb-0">{{ $data['approved'] ?? 0 }}</h2>
+                    </div>
+                    <div class="mt-3" style="visibility: hidden;">
+                        <span class="btn btn-light btn-sm">&nbsp;</span>
+                    </div>
                 </div>
             </div>
         </div>
