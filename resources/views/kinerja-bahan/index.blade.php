@@ -27,7 +27,9 @@
                     <th>Nama Bahan</th>
                     <th>Link</th>
                     <th>Keterangan</th>
+                    @if(in_array(auth()->user()->role, ['admin', 'kabid', 'kanit']))
                     <th width="200">Aksi</th>
+                    @endif
                 </tr>
             </thead>
             <tbody>
@@ -39,11 +41,11 @@
                         <a href="{{ $bahan->link }}" target="_blank" rel="noopener">{{ Str::limit($bahan->link, 50) }}</a>
                     </td>
                     <td>{{ $bahan->keterangan ?: '-' }}</td>
+                    @if(in_array(auth()->user()->role, ['admin', 'kabid', 'kanit']))
                     <td>
                         <a href="{{ route('kinerja-bahan.show', $bahan->id) }}" class="btn btn-sm btn-info" title="Detail">
                             <i class="bi bi-eye"></i>
                         </a>
-                        @if(auth()->user()->role !== 'staf')
                         <a href="{{ route('kinerja-bahan.edit', $bahan->id) }}" class="btn btn-sm btn-warning" title="Edit">
                             <i class="bi bi-pencil"></i>
                         </a>
@@ -55,12 +57,12 @@
                                 <i class="bi bi-trash"></i>
                             </button>
                         </form>
-                        @endif
                     </td>
+                    @endif
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="5" class="text-center">Belum ada bahan penilaian</td>
+                    <td colspan="{{ in_array(auth()->user()->role, ['admin', 'kabid', 'kanit']) ? 5 : 4 }}" class="text-center">Belum ada bahan penilaian</td>
                 </tr>
                 @endforelse
             </tbody>

@@ -33,8 +33,10 @@
                     <th>Unit</th>
                     <th width="110">Status</th>
                     <th>Keterangan</th>
+                    @if(in_array(auth()->user()->role, ['admin', 'kabid', 'kanit']))
                     <th width="120">Jml Penilaian</th>
                     <th width="200">Aksi</th>
+                    @endif
                 </tr>
             </thead>
             <tbody>
@@ -48,12 +50,12 @@
                         <span class="badge bg-info text-dark">{{ $pejabat->status ?: '-' }}</span>
                     </td>
                     <td>{{ $pejabat->keterangan ?: '-' }}</td>
+                    @if(in_array(auth()->user()->role, ['admin', 'kabid', 'kanit']))
                     <td>{{ $pejabat->penilaian_count }}</td>
                     <td>
                         <a href="{{ route('kinerja-pejabat.show', $pejabat->id) }}" class="btn btn-sm btn-info" title="Detail">
                             <i class="bi bi-eye"></i>
                         </a>
-                        @if(auth()->user()->role !== 'staf')
                         <a href="{{ route('kinerja-pejabat.edit', $pejabat->id) }}" class="btn btn-sm btn-warning" title="Edit">
                             <i class="bi bi-pencil"></i>
                         </a>
@@ -65,12 +67,12 @@
                                 <i class="bi bi-trash"></i>
                             </button>
                         </form>
-                        @endif
                     </td>
+                    @endif
                 </tr>
                 @empty
                 <tr>
-                    <td colspan="8" class="text-center">Belum ada pejabat penilai</td>
+                    <td colspan="{{ in_array(auth()->user()->role, ['admin', 'kabid', 'kanit']) ? 8 : 6 }}" class="text-center">Belum ada pejabat penilai</td>
                 </tr>
                 @endforelse
             </tbody>
