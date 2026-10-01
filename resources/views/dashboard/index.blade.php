@@ -206,6 +206,46 @@
 
 @if(in_array($role, ['admin', 'kabid', 'kanit']))
     @include('dashboard.partials.pegawai-statistik', ['data' => $data])
+@elseif($role == 'staf')
+    <div class="row mb-2">
+        <div class="col-12">
+            <h5 class="text-secondary fw-bold mb-3 mt-2"><i class="bi bi-people"></i> Ringkasan Pegawai & Statistik</h5>
+        </div>
+    </div>
+    <div class="row g-3 mb-4">
+        <!-- Jumlah Pegawai -->
+        <div class="col-md-6">
+            <div class="card bg-primary text-white shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h6 class="card-title mb-0">Jumlah Pegawai</h6>
+                            <h2 class="display-6 fw-bold mb-0 mt-2">{{ $data['total_pegawai'] ?? 0 }}</h2>
+                        </div>
+                        <i class="bi bi-people display-4 opacity-50"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Jumlah Gender -->
+        <div class="col-md-6">
+            <div class="card bg-info text-white shadow-sm h-100">
+                <div class="card-body">
+                    <h6 class="card-title mb-2">Jumlah Gender</h6>
+                    <ul class="list-unstyled mb-0 small">
+                        @forelse($data['pegawaiPerGender'] ?? [] as $gender => $count)
+                            <li class="d-flex justify-content-between py-1 border-bottom border-light border-opacity-25">
+                                <span>{{ $gender === 'L' ? 'Laki-laki' : ($gender === 'P' ? 'Perempuan' : 'Tidak Diatur') }}</span>
+                                <span class="badge bg-light text-dark fw-bold">{{ $count }}</span>
+                            </li>
+                        @empty
+                            <li>Belum ada data</li>
+                        @endforelse
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
 @endif
 
 @endsection
