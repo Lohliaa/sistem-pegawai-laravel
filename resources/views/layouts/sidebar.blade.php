@@ -77,6 +77,7 @@
     
     <div class="collapse {{ $isPenilaianActive ? 'show' : '' }}" id="penilaianKinerjaSubmenu">
         <div class="ps-2 py-1" style="background: rgba(0,0,0,0.15); border-radius: 5px; margin-top: 2px; margin-bottom: 5px;">
+            @if(auth()->user()->role !== 'staf')
             <a href="{{ route('kinerja-status.index') }}" class="{{ request()->routeIs('kinerja-status.*') ? 'active' : '' }}" style="font-size: 0.9rem; padding: 8px 12px;">
                 <i class="bi bi-person-check"></i> Status
             </a>
@@ -89,6 +90,7 @@
             <a href="{{ route('kinerja-bahan.index') }}" class="{{ request()->routeIs('kinerja-bahan.*') ? 'active' : '' }}" style="font-size: 0.9rem; padding: 8px 12px;">
                 <i class="bi bi-file-earmark-text"></i> Bahan Penilaian
             </a>
+            @endif
             <!-- Form Penilaian Submenu -->
             @php $isFormActive = request()->routeIs('form-penilaian.*'); @endphp
             <a href="#formPenilaianSubmenu" data-bs-toggle="collapse" class="d-flex align-items-center justify-content-between {{ $isFormActive ? 'active' : '' }}" aria-expanded="{{ $isFormActive ? 'true' : 'false' }}" style="font-size: 0.9rem; padding: 8px 12px; cursor: pointer;">
