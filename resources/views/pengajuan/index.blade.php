@@ -3,6 +3,13 @@
 @section('title', 'Daftar Pengajuan')
 
 @section('content')
+@if(in_array(auth()->user()->role, ['kabid', 'kanit', 'staf']))
+<div class="card">
+    <div class="card-body text-center py-5">
+        <h4>Masih dalam pengembangan</h4>
+    </div>
+</div>
+@else
 <div class="d-flex justify-content-between align-items-center mb-3">
     <h2>Daftar Pengajuan</h2>
     @if(auth()->user()->role == 'staf')
@@ -114,4 +121,5 @@
         </table>
     </div>
 </div>
+@endif
 @endsection
