@@ -53,6 +53,12 @@
     </a>
     @endif
 
+    <!-- SOP Kepegawaian Menu (All authenticated users) -->
+    <div class="section-title mt-3 mb-2" style="color: #95a5a6; font-size: 0.85rem; font-weight: bold; text-transform: uppercase;">Kepegawaian</div>
+    <a href="{{ route('sop-kepegawaian.index') }}" class="{{ request()->routeIs('sop-kepegawaian.*') ? 'active' : '' }}">
+        <i class="bi bi-file-earmark-pdf"></i> SOP Kepegawaian
+    </a>
+
     <!-- Penilaian Kinerja Menu (Admin, Kanit, Kabid) -->
     @if(in_array(auth()->user()->role, ['admin', 'kanit', 'kabid', 'staf']))
     @php

@@ -13,6 +13,7 @@ use App\Http\Controllers\KinerjaPejabatController;
 use App\Http\Controllers\KinerjaBahanController;
 use App\Http\Controllers\FormPenilaianController;
 use App\Http\Controllers\LaporanPenilaianController;
+use App\Http\Controllers\SopKepegawaianController;
 use Illuminate\Support\Facades\Route;
 
 // Redirect root to login
@@ -130,6 +131,21 @@ Route::middleware('auth')->group(function () {
         Route::get('laporan-penilaian/detail/{id}', [LaporanPenilaianController::class, 'detail'])->name('laporan-penilaian.detail');
         Route::get('laporan-penilaian/export', [LaporanPenilaianController::class, 'export'])->name('laporan-penilaian.export');
     });
+
+    // SOP Kepegawaian Routes - Read access for all authenticated users
+    Route::get('sop-kepegawaian', [SopKepegawaianController::class, 'index'])->name('sop-kepegawaian.index');
+
+    // SOP Kepegawaian CRUD - Admin only
+    Route::middleware('role:admin')->group(function () {
+        Route::get('sop-kepegawaian/create', [SopKepegawaianController::class, 'create'])->name('sop-kepegawaian.create');
+        Route::post('sop-kepegawaian', [SopKepegawaianController::class, 'store'])->name('sop-kepegawaian.store');
+        Route::get('sop-kepegawaian/{sop_kepegawaian}/edit', [SopKepegawaianController::class, 'edit'])->name('sop-kepegawaian.edit');
+        Route::put('sop-kepegawaian/{sop_kepegawaian}', [SopKepegawaianController::class, 'update'])->name('sop-kepegawaian.update');
+        Route::delete('sop-kepegawaian/{sop_kepegawaian}', [SopKepegawaianController::class, 'destroy'])->name('sop-kepegawaian.destroy');
+    });
+
+    Route::get('sop-kepegawaian/{sop_kepegawaian}', [SopKepegawaianController::class, 'show'])->name('sop-kepegawaian.show');
+    Route::get('sop-kepegawaian/{sop_kepegawaian}/download', [SopKepegawaianController::class, 'downloadPdf'])->name('sop-kepegawaian.download');
 });
 
 Route::get('/print/penilaian/{id}', [\App\Http\Controllers\PrintController::class, 'cetak'])->name('print.penilaian');
