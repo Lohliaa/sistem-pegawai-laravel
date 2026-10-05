@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title', 'Sistem Pegawai')</title>
+    <link rel="icon" type="image/png" href="{{ asset('img/logo-sigatra (2).png') }}">
+    <link rel="apple-touch-icon" href="{{ asset('img/logo-sigatra (2).png') }}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
     <style>
@@ -82,7 +84,8 @@
                         <button class="btn btn-outline-dark btn-sm" id="toggleSidebarBtn">
                             <i class="bi bi-list fs-5"></i>
                         </button>
-                        <span class="navbar-brand mb-0 h1 ms-3 fs-6 text-muted">@yield('title', 'Sistem Pegawai')</span>
+                                                <span class="navbar-brand mb-0 h1 ms-3 fs-6 text-muted">@yield('title', 'Sistem Pegawai')</span>
+
                     </div>
                 </nav>
             @else
