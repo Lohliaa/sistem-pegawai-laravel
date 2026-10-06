@@ -41,6 +41,11 @@
                 <a href="{{ route('laporan-penilaian.cetak-semua', request()->query()) }}" target="_blank" class="btn btn-warning">
                     <i class="bi bi-printer"></i> Print Semua
                 </a>
+                @if(auth()->check() && auth()->user()->role === 'admin')
+                <a href="{{ route('laporan-penilaian.export', request()->query()) }}" class="btn btn-success">
+                    <i class="bi bi-file-earmark-excel"></i> Export Excel
+                </a>
+                @endif
             </div>
         </form>
     </div>

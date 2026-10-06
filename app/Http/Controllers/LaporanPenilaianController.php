@@ -62,19 +62,12 @@ class LaporanPenilaianController extends Controller
      */
     public function export(Request $request)
     {
+        if (auth()->check() && auth()->user()->role !== 'admin') {
+            abort(403, 'Unauthorized action.');
+        }
+
         $query = PenilaianKinerja::with(['pegawai', 'periode', 'pejabatPenilai'])
             ->filter($request->only(['pegawai_id', 'periode_id', 'pejabat_penilai_id']));
-
-        // Tambahkan pembatasan akses untuk Pejabat Penilai
-        if (auth()->check() && (auth()->user()->role === 'kanit' || auth()->user()->role === 'kabid')) {
-            $pegawai = auth()->user()->pegawai;
-            $pejabat = PejabatPenilai::where('pegawai_id', $pegawai?->id)->first();
-            if ($pejabat) {
-                $query->where('pejabat_penilai_id', $pejabat->id);
-            } else {
-                $query->whereRaw('1 = 0');
-            }
-        }
 
         $laporans = $query
             ->join('pegawai', 'pegawai.id', '=', 'penilaian_kinerja.pegawai_id')
@@ -83,35 +76,26 @@ class LaporanPenilaianController extends Controller
             ->select('penilaian_kinerja.*')
             ->get();
 
-        $headings = array_merge(
-            ['No', 'Nama Pegawai', 'Jabatan', 'Unit', 'Pejabat Penilai', 'Periode', 'Tanggal Penilaian'],
-            array_column(PenilaianKinerja::ASPEK, 'label'),
-            ['Nilai Total', 'Predikat', 'Status', 'Catatan']
-        );
+        $headings = [
+            'Nama Pegawai',
+            'Jabatan',
+            'Unit',
+            'Pejabat Penilai',
+            'Periode',
+            'Nilai Total',
+        ];
 
         $rows = [];
 
-        foreach ($laporans as $index => $laporan) {
-            $row = [
-                $index + 1,
+        foreach ($laporans as $laporan) {
+            $rows[] = [
                 $laporan->pegawai?->nama ?? '-',
                 $laporan->pegawai?->jabatan ?? '-',
                 $laporan->pegawai?->unit ?? '-',
                 $laporan->pejabatPenilai?->nama ?? '-',
                 $laporan->periode?->label ?? '-',
-                $laporan->updated_at ? $laporan->updated_at->format('d/m/Y') : '-',
+                $laporan->nilai_total !== null ? number_format((float) $laporan->nilai_total, 2, ',', '.') : '-',
             ];
-
-            foreach (array_keys(PenilaianKinerja::ASPEK) as $kolom) {
-                $row[] = $laporan->{$kolom} ?? '-';
-            }
-
-            $row[] = $laporan->nilai_total !== null ? number_format((float) $laporan->nilai_total, 2, ',', '.') : '-';
-            $row[] = PenilaianKinerja::hitungPredikat($laporan->nilai_total)['label'];
-            $row[] = PenilaianKinerja::STATUSES[$laporan->status] ?? $laporan->status;
-            $row[] = $laporan->catatan ?? '-';
-
-            $rows[] = $row;
         }
 
         $spreadsheet = ExcelHelper::spreadsheet($headings, $rows, 'Laporan Penilaian');

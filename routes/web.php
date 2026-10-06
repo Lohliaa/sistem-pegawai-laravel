@@ -129,7 +129,7 @@ Route::middleware('auth')->group(function () {
         Route::get('laporan-penilaian', [LaporanPenilaianController::class, 'index'])->name('laporan-penilaian.index');
         Route::get('laporan-penilaian/cetak-semua', [LaporanPenilaianController::class, 'cetakSemua'])->name('laporan-penilaian.cetak-semua');
         Route::get('laporan-penilaian/detail/{id}', [LaporanPenilaianController::class, 'detail'])->name('laporan-penilaian.detail');
-        Route::get('laporan-penilaian/export', [LaporanPenilaianController::class, 'export'])->name('laporan-penilaian.export');
+        Route::get('laporan-penilaian/export', [LaporanPenilaianController::class, 'export'])->name('laporan-penilaian.export')->middleware('role:admin');
     });
 
     // SOP Kepegawaian Routes - Read access for all authenticated users

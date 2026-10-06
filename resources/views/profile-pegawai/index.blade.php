@@ -14,14 +14,14 @@
                 <input type="text" name="search" class="form-control" value="{{ request('search') }}"
                        placeholder="Nama / Unit / Jabatan">
             </div>
-            <div class="col-auto">
+            <!-- <div class="col-auto">
                 <div class="d-flex gap-2">
                     <button type="submit" class="btn btn-primary" title="Terapkan"><i class="bi bi-search"></i></button>
                     <a href="{{ route('profile-pegawai.create') }}" class="btn btn-success" title="Tambah Pegawai">
                         <i class="bi bi-plus-circle"></i>
                     </a>
                 </div>
-            </div>
+            </div> -->
         </form>
     </div>
 </div>

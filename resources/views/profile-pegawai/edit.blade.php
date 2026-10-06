@@ -101,7 +101,7 @@
                             <label for="unit" class="form-label">Unit</label>
                             <select name="unit" id="unit" class="form-select">
                                 <option value="">-- Pilih Unit --</option>
-                                @foreach(['Daycare', 'TPA', 'Preschool', 'TKIT', 'TKIP', 'MI', 'SDIT', 'SMPIT', 'MA', 'PKBM', 'Yayasan'] as $unitOption)
+                                @foreach(['Daycare', 'TPA', 'Preschool', 'KBIT', 'TKIT', 'TKIP', 'MI', 'SDIT', 'SMPIT', 'MA', 'PKBM', 'Yayasan'] as $unitOption)
                                     <option value="{{ $unitOption }}" @selected(old('unit', $pegawai->unit) === $unitOption)>{{ $unitOption }}</option>
                                 @endforeach
                             </select>

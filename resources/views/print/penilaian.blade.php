@@ -229,7 +229,7 @@
                     <th></th>
                 </tr>
                 <tr class="table-light fw-bold">
-                    <th class="text-end" colspan="2">NILAI KESELURUHAN</th>
+                    <th class="text-end" colspan="2">NILAI AKHIR</th>
                     <th class="text-center">{{ number_format($penilaian->nilai_total ?? $ringkasan['nilai_keseluruhan'], 2, ',', '.') }}</th>
                     <th></th>
                 </tr>
